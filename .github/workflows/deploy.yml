@@ -1,0 +1,27 @@
+name: Kryptic-Terraform-EKS-DevOps
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'application/**'   # Triggers app deployment
+      - 'infrastructure/**' # Triggers infra deployment
+
+jobs:
+  deploy-infra:
+    if: contains(github.event.head_commit.modified_files, 'infrastructure/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: |
+          echo "Changed infrastructure code"
+
+  deploy-app:
+    if: contains(github.event.head_commit.modified_files, 'application/')
+    runs-on: ubuntu-latest
+    needs: deploy-infra  # Wait for infra if both changed
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-kubectl@v3
+      - run: |
+          echo "Changed application code"
