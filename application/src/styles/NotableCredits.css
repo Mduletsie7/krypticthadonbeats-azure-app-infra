@@ -1,0 +1,55 @@
+/* NotableCredits.css */
+
+.notable-credits {
+  padding: 50px 20px; /* Adjust top and bottom padding as needed */
+  text-align: center;
+}
+
+.album-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  margin-left: -20px; /* Counteract the gap with negative margin */
+}
+
+.album-item {
+  flex: 0 0 auto;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.album-item:hover {
+  transform: translateY(-5px);
+}
+
+img {
+  width: 50%;
+  height: auto;
+  border-radius: 8px 8px 0 0;
+}
+
+.album-info {
+  padding: 15px;
+  text-align: center;
+}
+
+/* Media query for screens smaller than 600px (adjust as needed) */
+@media (max-width: 600px) {
+
+  .notable-credits{
+    font-size: 14px;
+  }
+  .album-list {
+    flex-wrap: nowrap; /* Disable wrapping on small screens */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    margin-left: -140px; /* Counteract the gap with negative margin */
+  }
+
+  .album-item {
+    margin-right: 10px; /* Adjust spacing between items for small screens */
+  }
+}

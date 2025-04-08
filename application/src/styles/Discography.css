@@ -1,0 +1,38 @@
+/* Discography.css */
+.discography {
+    padding: 50px 0;
+    text-align: center;
+    color: white;
+  }
+  
+  .album-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .album {
+    margin: 20px;
+    max-width: 200px;
+  }
+  
+  .album img {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .album-info {
+    margin-top: 10px;
+  }
+  
+  .album-title {
+    color: white;
+    font-weight: bold;
+  }
+  
+  .album-year {
+    color: #777;
+  }
+  
+  /* Add any additional styles to customize your discography section */
+  

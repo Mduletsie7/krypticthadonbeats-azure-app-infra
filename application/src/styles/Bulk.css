@@ -1,0 +1,45 @@
+/* HeroSection.css */
+.bulk {
+    background: red;
+    color: white;
+    height: 7vh;
+    display: flex;
+    flex-direction: column; /* Updated to column layout */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1rem;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: <weight>;
+    font-style: normal;
+  }
+  
+  .hero-content {
+    display: flex;
+    flex-direction: column; /* Updated to column layout */
+    align-items: center;
+  }
+  
+
+  
+  .cta-button {
+    background-color: whitesmoke;
+    color: black;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .cta-button:hover {
+    background-color: #36454f;
+  }
+  
+  /* Media queries for screens smaller than 600px */
+  @media screen and (max-width: 600px) {
+    .bulk {
+      font-size: 0.6rem;
+    }
+  }

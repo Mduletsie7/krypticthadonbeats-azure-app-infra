@@ -1,0 +1,20 @@
+.LeaseBeats-heading {
+    background: #fdfbf8;
+    color: black;
+}
+
+.beats-meta {
+    font-size: 25px;
+}
+
+/* Media query for screens smaller than 600px (adjust as needed) */
+@media (max-width: 600px) {
+    iframe {
+        width:90%;
+        height: 600px;
+      }
+      .beats-meta {
+        font-size: 15px;
+        padding-bottom: 5px;
+    }
+  }

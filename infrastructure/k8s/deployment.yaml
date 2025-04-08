@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-eks-app
+  annotations: # Prometheus Application level monitoring
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3000"  # Your app's metrics port
+    prometheus.io/path: "/metrics"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-eks-app
+  template:
+    metadata:
+      labels:
+        app: my-eks-app
+    spec:
+      serviceAccountName: ecr-puller
+      containers:
+      - name: my-eks-app
+        image: 865494649634.dkr.ecr.us-east-1.amazonaws.com/mdu-ecr-repo-dev:latest
+        ports:
+        - containerPort: 3000

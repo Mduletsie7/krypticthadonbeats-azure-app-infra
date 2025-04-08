@@ -1,0 +1,64 @@
+/* HeroSection.css */
+.hero {
+  /* background-image: url('https://krypticmusicportfolio.s3.amazonaws.com/images/websitehero.jpg'); */
+  background-size: cover; /* Cover the entire container */
+  background-repeat: no-repeat;
+  background-position: center; /* Center the background image */
+  background-color: #f9e5d0; /* Adjust the last value (0.5) for opacity */
+    color: black;
+    height: 100vh;
+    display: flex;
+    flex-direction: column; /* Updated to column layout */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .hero-content {
+    display: flex;
+    flex-direction: column; /* Updated to column layout */
+    align-items: center;
+  }
+  
+  .hero-image {
+    max-width: 100%;
+    max-height: 300px; /* Set the maximum height as per your design */
+    margin-bottom: 20px; /* Added margin to create space between image and text */
+    border-radius: 8px; /* Optional: Add border-radius for a rounded look */
+  }
+  
+  .hero-text {
+    text-align: center;
+  }
+  .herotxt-kryptic {
+    color: #000;
+  
+  }
+  
+  .hero-text h1 {
+    color: #000;
+    font-size: 5rem;
+    margin-bottom: 20px;
+  }
+  
+  .hero-text p {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+  }
+  
+  .cta-button {
+    background-color: whitesmoke;
+    color: black;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .cta-button:hover {
+    background-color: #36454f;
+  }
+  
+  /* Add any additional styles to customize your hero section */
+  
