@@ -29,6 +29,7 @@ jobs:
           echo "Navigate to the application directory"
           echo "Confirm directory"
           pwd && ls -al
+          cd application
           ls 
           echo "Build the Docker image, tagging it with the current GitHub commit SHA"
           docker build -t kryptic-eks-devops:${{ github.sha }} .
