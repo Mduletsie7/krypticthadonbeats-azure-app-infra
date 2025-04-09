@@ -43,12 +43,23 @@ jobs:
        # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
         docker push 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
 
-    - name: Trigger Kubectl to pull the latest image
-      run: |
-       cd ..
-       pwd 
-       cd infrastructure/k8s
-       pwd
-    
-
+  K8S-Pull:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v4
+      - name: Login to ECR
+        uses: docker/login-action@v3
+        with:
+          registry: 865494649634.dkr.ecr.us-east-1.amazonaws.com
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          
+      - name: Build 
+        run: |
+            echo "Navigate to the application directory"
+            echo "Confirm directory"
+            pwd && ls -al
+            cd infrastructure
+            ls -al
+            
       
