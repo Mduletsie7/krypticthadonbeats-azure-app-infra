@@ -25,6 +25,7 @@ jobs:
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         
     - name: Build 
+      working-directory: ./application
       run: |
           # Navigate to the application directory
           cd application
