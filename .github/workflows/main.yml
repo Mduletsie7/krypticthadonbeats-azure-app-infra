@@ -63,7 +63,7 @@ jobs:
             cd infrastructure
       - name: Deploy to Kubernetes
         run: |
-          sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" ./k8/deployment.yaml
+          sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" ./k8s/deployment.yaml
           kubectl apply -f ./k8s
           
             
