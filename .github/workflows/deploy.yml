@@ -35,8 +35,6 @@ jobs:
       
         # Build the Docker image, tagging it with the current GitHub commit SHA
         docker build -t kryptic-eks-devops:${{ github.sha }} .
-
-      working-directory: repo
       
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
@@ -59,7 +57,7 @@ jobs:
         docker tag kryptic-eks-devops:${{ github.sha }} 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
 
        # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
-        docker tag kryptic-eks-devops:${{ github.sha }} 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
+        docker push 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
     
 
       
