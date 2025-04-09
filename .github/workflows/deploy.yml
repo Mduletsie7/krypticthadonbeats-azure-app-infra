@@ -27,11 +27,10 @@ jobs:
     - name: Build 
       working-directory: /home/runner/work/Terraform-eks-devops/application
       run: |
-          # Navigate to the application directory
-          cd application
-          # Confirm directory 
+          echo "Navigate to the application directory"
+          echo "Confirm directory" 
           ls 
-          # Build the Docker image, tagging it with the current GitHub commit SHA
+          echo "Build the Docker image, tagging it with the current GitHub commit SHA"
           docker build -t kryptic-eks-devops:${{ github.sha }} .
       
     - name: Run Trivy vulnerability scanner
