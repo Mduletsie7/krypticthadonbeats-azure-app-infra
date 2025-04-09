@@ -19,6 +19,6 @@ spec:
       serviceAccountName: ecr-puller
       containers:
       - name: my-eks-app
-        image: 865494649634.dkr.ecr.us-east-1.amazonaws.com/mdu-ecr-repo-dev:latest
+        image: 865494649634.dkr.ecr.us-east-1.amazonaws.com/mdu-ecr-repo-dev:${GITHUB_SHA}
         ports:
         - containerPort: 3000

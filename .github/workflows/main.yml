@@ -55,12 +55,16 @@ jobs:
           username: ${{ secrets.AWS_ACCESS_KEY_ID }}
           password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           
-      - name: Build 
+      - name: Apply deployment 
         run: |
             echo "Navigate to the application directory"
             echo "Confirm directory"
             pwd && ls -al
             cd infrastructure
-            ls -al
+      - name: Deploy to Kubernetes
+        run: |
+          sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" ./k8/deployment.yaml
+          kubectl apply -f ./k8s
+          
             
       
