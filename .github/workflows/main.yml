@@ -61,13 +61,21 @@ jobs:
           sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" infrastructure/k8s/deployment.yaml
           cat infrastructure/k8s/deployment.yaml
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-region: ${{ vars.AWS_ACCOUNT_REGION }}
+
       - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
+          # Configure AWS credentials
         
-          aws eks update-kubeconfig --region "us-east-1" --name "mdu-eks-cluster-dev"
+          aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-devops"
           # Check current cluster
           kubectl config current-context
           kubectl apply -f infrastructure/k8s/
