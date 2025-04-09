@@ -4,7 +4,7 @@ on:
     branches: [develop]
     
 jobs:
-  deploy-infra:
+  .deploy-infra:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +51,13 @@ jobs:
         docker tag kryptic-eks-devops:${{ github.sha }} 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
        # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
         docker push 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
+
+    - name: Trigger Kubectl to pull the latest image
+      run: |
+       cd ..
+       pwd 
+       cd infrastructure/k8s
+       pwd
     
 
       
