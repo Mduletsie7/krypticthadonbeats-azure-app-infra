@@ -60,6 +60,19 @@ jobs:
           pwd
           sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" infrastructure/k8s/deployment.yaml
           cat infrastructure/k8s/deployment.yaml
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+        
+          aws eks update-kubeconfig --region "us-east-1" --name "mdu-eks-cluster-dev"
+          # Check current cluster
+          kubectl config current-context
+          kubectl apply -f infrastructure/k8s/
           
-            
-      
+      - name: Check pods
+        run: |
+          kubectl get pods -n default
+          kubectl get svc -n default my-eks-app
