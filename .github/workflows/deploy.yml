@@ -25,7 +25,7 @@ jobs:
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         
     - name: Build 
-      working-directory: application
+      working-directory: /home/runner/work/Terraform-eks-devops/application
       run: |
           # Navigate to the application directory
           cd application
