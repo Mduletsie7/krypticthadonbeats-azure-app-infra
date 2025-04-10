@@ -103,7 +103,7 @@ jobs:
             --create-namespace \
             --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-da008758-db7b-4c78-a738-a5c72db030a2/api/v1/remote_write" \
             --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
-            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
+            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500 \
             --set prometheus.prometheusSpec.resources.requests.cpu="500m" \
             --set prometheus.prometheusSpec.resources.requests.memory="2Gi" \
             --set prometheus.prometheusSpec.retention="24h"
