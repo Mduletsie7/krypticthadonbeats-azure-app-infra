@@ -1,7 +1,6 @@
 .App {
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
-  font-weight: <weight>;
   font-style: normal;
   text-align: center;
 }
@@ -9,6 +8,10 @@
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.text-blue-800 {
+	color: burlywood;
 }
 
 #root > div > div.surface-ground.px-4.py-8.md\:px-6.lg\:px-8 > div.grid {
