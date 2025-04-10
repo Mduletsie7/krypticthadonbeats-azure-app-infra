@@ -122,4 +122,4 @@ jobs:
       - name: Check pods
         run: |
           kubectl get pods -n default
-          kubectl get svc -n default kryptic-eks-dev
+          kubectl get svc -n default kryptic-eks-dev-service
