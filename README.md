@@ -22,7 +22,7 @@ Key Highlights
 
 2. React.js Application
 
-    Dockerized: Built and pushed to Amazon ECR on every commit.
+    Dockerized: Built, auto-tagged using latest commit sha and pushed to Amazon ECR on every commit.
 
     Kubernetes-Deployed:
 
