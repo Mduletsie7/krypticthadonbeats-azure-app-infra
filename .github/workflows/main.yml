@@ -46,6 +46,7 @@ jobs:
   K8S-Pull:
       runs-on: ubuntu-latest
       needs: Build
+      environment: dev
       steps:
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
