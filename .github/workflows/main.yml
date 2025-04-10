@@ -1,0 +1,138 @@
+name: Kryptic-Terraform-EKS-DevOps
+on:
+  push:
+    branches: [develop]
+    
+jobs:
+  Build:
+    permissions:
+      security-events: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Login to ECR
+      uses: docker/login-action@v3
+      with:
+        registry: 865494649634.dkr.ecr.us-east-1.amazonaws.com
+        username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
+    - name: Build Docker Image 
+      run: |
+          echo "Navigate to the application directory"
+          echo "Confirm directory"
+          pwd && ls -al
+          cd application
+          ls 
+          echo "Build the Docker image, tagging it with the current GitHub commit SHA"
+          docker build -t kryptic-app-dev:${{ github.sha }} .
+    - name: Push image to ECR if scan pass
+      run: |
+          # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
+          docker tag kryptic-app-dev:${{ github.sha }} 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-ecr-repo-dev:${{ github.sha }}
+          # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
+          docker push 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-ecr-repo-dev:${{ github.sha }}
+
+  codeql-analysis:
+    name: CodeQL Analysis
+    needs: Build
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: 'javascript' # Change to your primary language
+        queries: security-extended
+        
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      
+
+  Deploy:
+      runs-on: ubuntu-latest
+      needs: [Build,codeql-analysis]
+      environment: dev
+      steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_DEV_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_ACCOUNT_REGION }}
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          # Check current k8s version
+          kubectl version --client
+          # Install aws-iam-authenticator (required for EKS)
+          curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/aws-iam-authenticator
+          chmod +x aws-iam-authenticator
+          sudo mv aws-iam-authenticator /usr/local/bin/
+          aws-iam-authenticator version
+
+      - name: Configure EKS kubeconfig
+        run: |
+          # Set the kubeconfig path explicitly
+          export KUBECONFIG=~/.kube/config
+          mkdir -p ~/.kube
+
+          # Configure Kube to use aws eks context
+          aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-cluster-dev"
+          # Check current cluster
+          kubectl config current-context
+          kubectl get nodes
+
+      - name: Verify cluster access
+        run: |
+          kubectl cluster-info
+          kubectl get namespaces
+
+      - name: Uninstall existing Prometheus
+        run: |
+          helm uninstall prometheus --namespace monitoring
+          # Optional: Delete the namespace if you want a completely clean slate
+          kubectl delete namespace monitoring --ignore-not-found=true
+
+      - name: Install Prometheus for monitoring
+        run: |
+          # Add Helm repo (if not already present)
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          # Install fresh Prometheus stack
+          helm install prometheus prometheus-community/kube-prometheus-stack \
+            --namespace monitoring \
+            --create-namespace \
+            --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-da008758-db7b-4c78-a738-a5c72db030a2/api/v1/remote_write" \
+            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
+            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500 \
+            --set prometheus.prometheusSpec.resources.requests.cpu="500m" \
+            --set prometheus.prometheusSpec.resources.requests.memory="2Gi" \
+            --set prometheus.prometheusSpec.retention="24h"
+
+      - name: Deploy Application
+        run: |
+            pwd
+            sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" infrastructure/k8s/deployment.yaml
+            cat infrastructure/k8s/deployment.yaml
+
+      - name: Apply Deployment 
+        run: |
+           kubectl apply -f infrastructure/k8s/
+           kubectl rollout status deployment/kryptic-eks-dev -n default --timeout=120s
+          
+      - name: Check pods
+        run: |
+          kubectl get pods -n default
+          kubectl get svc -n default kryptic-eks-dev-service

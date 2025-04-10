@@ -1,13 +1,13 @@
 variable "eks_cluster_name" {
   type        = string
   description = "eks cluster name"
-  default = "mdu-aks-cluster"
+  default = "kryptic-eks-cluster"
 }
 
 variable "k8s_version" {
   type        = string
   description = "kubernetes version"
-  default     = "1.27"
+  default     = "1.32"
 }
 
 variable "control_plane_subnet_ids" {
@@ -38,7 +38,7 @@ variable "workers_config" {
       max_size     = 2
       desired_size = 1
 
-      instance_types = ["t3.large"]
+      instance_types = ["t3.medium"]
       capacity_type  = "SPOT"
     }
   }

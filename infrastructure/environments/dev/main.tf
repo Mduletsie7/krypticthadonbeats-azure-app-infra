@@ -1,6 +1,7 @@
 module "ecr" {
     source = "../../modules/services/ecr"
-    ecr_name = "mdu-ecr-repo-${var.env}"
+    ecr_name = "kryptic-ecr-repo-${var.env}"
+    force_delete = var.force_delete
     tags = var.tags
 }
 
@@ -14,7 +15,7 @@ module "eks_with_node_group" {
   source = "../../modules/services/eks"
  
   # passing the required parameters
-  eks_cluster_name = "mdu-eks-cluster-${var.env}"
+  eks_cluster_name = "kryptic-eks-cluster-${var.env}"
   k8s_version      = var.k8s_version
  
   # pass vpc and subnet details from vpc_with_subnets module

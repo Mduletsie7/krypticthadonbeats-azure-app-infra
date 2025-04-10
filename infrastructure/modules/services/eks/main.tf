@@ -101,7 +101,7 @@ resource "aws_iam_role_policy_attachment" "ecr_puller" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-# Enable AMP (add to your Terraform)
+# Enable Amazon Managed Prometheus 
 resource "aws_prometheus_workspace" "main" {
   alias = "eks-monitoring"
 }
