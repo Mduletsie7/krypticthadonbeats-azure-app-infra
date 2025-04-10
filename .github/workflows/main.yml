@@ -25,12 +25,12 @@ jobs:
           cd application
           ls 
           echo "Build the Docker image, tagging it with the current GitHub commit SHA"
-          docker build -t kryptic-eks-devops:${{ github.sha }} .
+          docker build -t kryptic-app-dev:${{ github.sha }} .
       
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
       with:
-          image-ref: 'kryptic-eks-devops:${{ github.sha }}'
+          image-ref: 'kryptic-app-dev:${{ github.sha }}'
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
@@ -39,9 +39,9 @@ jobs:
     - name: Push image to ECR if scan pass
       run: |
        # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
-        docker tag kryptic-eks-devops:${{ github.sha }} 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
+        docker tag kryptic-app-dev:${{ github.sha }} 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-ecr-repo-dev:${{ github.sha }}
        # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
-        docker push 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-eks-devops:${{ github.sha }}
+        docker push 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-ecr-repo-dev:${{ github.sha }}
 
   K8S-Pull:
       runs-on: ubuntu-latest
@@ -75,7 +75,7 @@ jobs:
           sudo mv kubectl /usr/local/bin/
           # Configure AWS credentials
         
-          aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-devops"
+          aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-cluster-dev"
           # Check current cluster
           kubectl config current-context
           kubectl apply -f infrastructure/k8s/
@@ -83,4 +83,4 @@ jobs:
       - name: Check pods
         run: |
           kubectl get pods -n default
-          kubectl get svc -n default my-eks-app
+          kubectl get svc -n default kryptic-eks-dev
