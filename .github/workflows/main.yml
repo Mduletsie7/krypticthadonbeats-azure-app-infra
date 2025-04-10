@@ -58,7 +58,7 @@ jobs:
 
   Deploy:
       runs-on: ubuntu-latest
-      needs: Build
+      needs: [Build,codeql-analysis]
       environment: dev
       steps:
       - uses: actions/checkout@v4
