@@ -30,6 +30,7 @@ jobs:
       run: |
         cd application
         docker build -t ${ECR_REPO}:${{ github.sha }} .
+        docker push ${ECR_REPO}:${{ github.sha }}
         echo "image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
 
   codeql-analysis:
@@ -47,13 +48,11 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
-        languages: 'javascript' # Change to your language (python, java, etc.)
+        languages: 'javascript' # Change to your primary language
         queries: security-extended
         
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
-      with:
-        category: "/language:javascript"
 
   scan:
     name: Container Security Scan
@@ -66,7 +65,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Run Trivy Scan
-      uses: aquasecurity/trivy-action@v0.14
+      uses: aquasecurity/trivy-action@0.14.0 # Fixed version tag
       with:
         image-ref: '${{ env.ECR_REPO }}:${{ needs.build.outputs.image_tag }}'
         format: 'sarif'
@@ -82,6 +81,7 @@ jobs:
   deploy:
     name: Deploy to EKS
     needs: [build, codeql-analysis, scan]
+    if: success() # Only deploy if all previous jobs succeed
     runs-on: ubuntu-latest
     environment: dev
     
@@ -101,7 +101,7 @@ jobs:
         install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
         aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER }}
     
-    - name: Deploy Monitoring Stack
+    - name: Deploy Monitoring
       run: |
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
@@ -114,6 +114,7 @@ jobs:
     - name: Deploy Application
       run: |
         sed -i "s|IMAGE_TAG|${{ needs.build.outputs.image_tag }}|g" infrastructure/k8s/deployment.yaml
-        kubectl apply -f infrastructure/k8s/
+        kubectl apply -f infrastructure/k8s/ --validate=true
         kubectl rollout status deployment/kryptic-eks-dev -n default --timeout=300s
-        kubectl get svc kryptic-eks-dev-service -n default
+        echo "Service URL:"
+        kubectl get svc kryptic-eks-dev-service -n default -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'
