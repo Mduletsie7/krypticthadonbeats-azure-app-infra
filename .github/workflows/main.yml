@@ -64,9 +64,11 @@ jobs:
 
       - name: Install kubectl
         run: |
-          curl -LO "https://dl.k8s.io/release/v1.30.5/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/release/v1.27/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
+          # Check current k8s version
+          kubectl version
           # Configure AWS credentials
           aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-cluster-dev"
           # Check current cluster
