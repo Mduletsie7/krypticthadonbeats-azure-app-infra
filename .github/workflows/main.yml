@@ -43,7 +43,7 @@ jobs:
        # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
         docker push 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-ecr-repo-dev:${{ github.sha }}
 
-  K8S-Pull:
+  K8S-Deploy:
       runs-on: ubuntu-latest
       needs: Build
       environment: dev
@@ -86,16 +86,28 @@ jobs:
           kubectl cluster-info
           kubectl get namespaces
 
-      - name: Install Prometheus
+      - name: Install/Upgrade Prometheus
         run: |
-          # Install Prometheus Helm chart
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm install prometheus prometheus-community/kube-prometheus-stack \
-          --namespace monitoring \
-          --create-namespace \
-          --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-713f8648-9a8f-4569-bdd8-54558c3be426/api/v1/remote_write" \
-          --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
-          --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
+            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+            helm repo update
+            
+            # Check if release exists
+            if helm list -n monitoring | grep -q "prometheus"; then
+              echo "Upgrading existing Prometheus release..."
+              helm upgrade prometheus prometheus-community/kube-prometheus-stack \
+                --namespace monitoring \
+                --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-713f8648-9a9f-4569-bdd8-54558c3be426/api/v1/remote_write" \
+                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
+                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
+            else
+              echo "Installing new Prometheus release..."
+              helm install prometheus prometheus-community/kube-prometheus-stack \
+                --namespace monitoring \
+                --create-namespace \
+                --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-713f8648-9a9f-4569-bdd8-54558c3be426/api/v1/remote_write" \
+                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
+                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
+            fi
 
       - name: Deploy to Kubernetes
         run: |
