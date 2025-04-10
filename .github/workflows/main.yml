@@ -51,6 +51,7 @@ jobs:
       with:
         languages: 'javascript' # Change to your primary language
         queries: security-extended
+        paths: './application'
         
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
