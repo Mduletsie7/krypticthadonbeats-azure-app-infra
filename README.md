@@ -10,9 +10,9 @@ Key Highlights
 
     Environment Isolation:
 
-    infrastructure/environments/dev/     # Dev configs /n
-    infrastructure/environments/prod/    # Prod configs /n
-    infrastructure/environments/staging/ # Staging configs /n
+    infrastructure/environments/dev/     # Dev configs <br />
+    infrastructure/environments/prod/    # Prod configs <br />
+    infrastructure/environments/staging/ # Staging configs <br />
 
     Remote State Management:
 
