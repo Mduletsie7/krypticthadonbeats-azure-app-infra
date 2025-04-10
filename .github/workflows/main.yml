@@ -106,7 +106,7 @@ jobs:
             --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
             --set prometheus.prometheusSpec.resources.requests.cpu="500m" \
             --set prometheus.prometheusSpec.resources.requests.memory="2Gi" \
-            --set prometheus.prometheusSpec.retention="24h" \ # Reduce retention to save RAM
+            --set prometheus.prometheusSpec.retention="24h"
 
       - name: Deploy to Kubernetes
         run: |
