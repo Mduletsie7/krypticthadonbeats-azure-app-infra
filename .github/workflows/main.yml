@@ -64,7 +64,7 @@ jobs:
 
       - name: Install kubectl
         run: |
-          curl -LO "https://dl.k8s.io/release/v1.27/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/
           # Check current k8s version
@@ -73,6 +73,17 @@ jobs:
           aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-cluster-dev"
           # Check current cluster
           kubectl config current-context
+
+      - name: Install Prometheus
+        run: |
+          # Install Prometheus Helm chart
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm install prometheus prometheus-community/kube-prometheus-stack \
+          --namespace monitoring \
+          --create-namespace \
+          --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-c29b4e30-97ce-4c6c-8b04-344737491b9a/api/v1/remote_write" \
+          --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
+          --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
 
       - name: Apply Deployment 
         run: |

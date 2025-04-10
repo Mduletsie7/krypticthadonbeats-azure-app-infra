@@ -1,6 +1,7 @@
 module "ecr" {
     source = "../../modules/services/ecr"
     ecr_name = "kryptic-ecr-repo-${var.env}"
+    force_delete = var.force_delete
     tags = var.tags
 }
 

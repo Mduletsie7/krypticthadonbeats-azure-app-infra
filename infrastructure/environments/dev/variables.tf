@@ -28,5 +28,10 @@ variable "vpc_cidr" {
 variable "k8s_version" {
   type        = string
   description = "kubernetes version"
-  default     = "1.27"
+  default     = "1.32"
+}
+
+variable "force_delete" {
+  type = bool
+  default = true
 }

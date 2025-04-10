@@ -7,7 +7,7 @@ variable "eks_cluster_name" {
 variable "k8s_version" {
   type        = string
   description = "kubernetes version"
-  default     = "1.27"
+  default     = "1.32"
 }
 
 variable "control_plane_subnet_ids" {
