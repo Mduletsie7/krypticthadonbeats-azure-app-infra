@@ -8,11 +8,7 @@ Key Highlights
 
     Reusable Modules: (/infrastructure/modules/)
 
-        EKS Cluster, VPC, IAM, ALB Controller, Autoscaler.
-
     Environment Isolation:
-    bash
-    Copy
 
     infrastructure/environments/dev/     # Dev configs
     infrastructure/environments/prod/    # Prod configs
