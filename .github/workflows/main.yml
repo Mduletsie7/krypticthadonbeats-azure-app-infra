@@ -55,12 +55,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_DEV_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_DEV_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_ACCOUNT_REGION }}
-          
-      - name: Deploy to Kubernetes
-        run: |
-          pwd
-          sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" infrastructure/k8s/deployment.yaml
-          cat infrastructure/k8s/deployment.yaml
 
       - name: Install kubectl
         run: |
@@ -69,7 +63,7 @@ jobs:
           sudo mv kubectl /usr/local/bin/
           # Check current k8s version
           kubectl version
-          # Configure AWS credentials
+          # Configure Kube to use aws eks context
           aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-cluster-dev"
           # Check current cluster
           kubectl config current-context
@@ -84,6 +78,12 @@ jobs:
           --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-c29b4e30-97ce-4c6c-8b04-344737491b9a/api/v1/remote_write" \
           --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
           --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
+
+      - name: Deploy to Kubernetes
+        run: |
+            pwd
+            sed -i "s/\${GITHUB_SHA}/${{ github.sha }}/g" infrastructure/k8s/deployment.yaml
+            cat infrastructure/k8s/deployment.yaml
 
       - name: Apply Deployment 
         run: |
