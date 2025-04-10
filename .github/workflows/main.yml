@@ -116,11 +116,8 @@ jobs:
 
       - name: Apply Deployment 
         run: |
-          if ! kubectl get deployment kryptic-eks-dev -n default; then
-            kubectl apply -f infrastructure/k8s/
-          else
-            kubectl rollout restart deployment kryptic-eks-dev -n default
-          fi
+           kubectl apply -f infrastructure/k8s/
+           kubectl rollout status deployment/kryptic-eks-dev -n default --timeout=120s
           
       - name: Check pods
         run: |
