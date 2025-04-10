@@ -88,27 +88,12 @@ jobs:
 
       - name: Install/Upgrade Prometheus
         run: |
-            helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-            helm repo update
+          helm upgrade prometheus prometheus-community/kube-prometheus-stack \
+            --namespace monitoring \
+            --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-713f8648-9a8f-4569-bdd8-54558c3be426/api/v1/remote_write" \
+            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
+            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
             
-            # Check if release exists
-            if helm list -n monitoring | grep -q "prometheus"; then
-              echo "Upgrading existing Prometheus release..."
-              helm upgrade prometheus prometheus-community/kube-prometheus-stack \
-                --namespace monitoring \
-                --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-713f8648-9a9f-4569-bdd8-54558c3be426/api/v1/remote_write" \
-                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
-                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
-            else
-              echo "Installing new Prometheus release..."
-              helm install prometheus prometheus-community/kube-prometheus-stack \
-                --namespace monitoring \
-                --create-namespace \
-                --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-713f8648-9a9f-4569-bdd8-54558c3be426/api/v1/remote_write" \
-                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
-                --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500
-            fi
-
       - name: Deploy to Kubernetes
         run: |
             pwd
