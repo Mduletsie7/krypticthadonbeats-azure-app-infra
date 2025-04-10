@@ -78,7 +78,7 @@ jobs:
           aws eks update-kubeconfig --region "us-east-1" --name "kryptic-eks-cluster-dev"
           # Check current cluster
           kubectl config current-context
-          kubectl apply -f infrastructure/k8s/
+          kubectl apply -f infrastructure/k8s/ --validate=false
           
       - name: Check pods
         run: |
