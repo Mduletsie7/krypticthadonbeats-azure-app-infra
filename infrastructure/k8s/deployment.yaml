@@ -20,5 +20,6 @@ spec:
       containers:
       - name: kryptic-eks-dev
         image: 865494649634.dkr.ecr.us-east-1.amazonaws.com/kryptic-ecr-repo-dev:${GITHUB_SHA}
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
