@@ -86,22 +86,30 @@ jobs:
           kubectl cluster-info
           kubectl get namespaces
 
-      - name: Install Prometheus
-        run: |
-          # Add Helm repo (if not already present)
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo update
-          # Install fresh Prometheus stack
-          helm install prometheus prometheus-community/kube-prometheus-stack \
-            --namespace monitoring \
-            --create-namespace \
-            --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-da008758-db7b-4c78-a738-a5c72db030a2/api/v1/remote_write" \
-            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
-            --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500 \
-            --set prometheus.prometheusSpec.resources.requests.cpu="500m" \
-            --set prometheus.prometheusSpec.resources.requests.memory="2Gi" \
-            --set prometheus.prometheusSpec.retention="24h"
+# PROMETHEUS ======================================
 
+# NOTE::
+# Tip from SR DevOps Engineer after project presentation & code demo   
+# This section will be removed. Prometheus will be set up as infrastructure
+# Repetitive set up of prometheus on every cicd trigger makes not optimal 
+
+      # - name: Install Prometheus
+      #   run: |
+      #     # Add Helm repo (if not already present)
+      #     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      #     helm repo update
+      #     # Install fresh Prometheus stack
+      #     helm install prometheus prometheus-community/kube-prometheus-stack \
+      #       --namespace monitoring \
+      #       --create-namespace \
+      #       --set prometheus.prometheusSpec.remoteWrite[0].url="https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-da008758-db7b-4c78-a738-a5c72db030a2/api/v1/remote_write" \
+      #       --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.maxSamplesPerSend=1000 \
+      #       --set prometheus.prometheusSpec.remoteWrite[0].queueConfig.capacity=2500 \
+      #       --set prometheus.prometheusSpec.resources.requests.cpu="500m" \
+      #       --set prometheus.prometheusSpec.resources.requests.memory="2Gi" \
+      #       --set prometheus.prometheusSpec.retention="24h"
+
+# ====================================================
       - name: Deploy to Kubernetes
         run: |
             pwd
