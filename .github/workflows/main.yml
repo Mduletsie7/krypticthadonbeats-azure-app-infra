@@ -13,7 +13,7 @@ jobs:
     - name: Login to ECR
       uses: docker/login-action@v3
       with:
-        registry: 865494649634.dkr.ecr.us-east-1.amazonaws.com // change to private
+        registry: 865494649634.dkr.ecr.us-east-1.amazonaws.com
         username: ${{ secrets.AWS_ACCESS_KEY_ID }}
         password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         
@@ -108,9 +108,6 @@ jobs:
             --set prometheus.prometheusSpec.resources.requests.memory="2Gi" \
             --set prometheus.prometheusSpec.retention="24h"
 
-            // consider using terraform helm provider to set up prometheus so you only setting up once 
-            // Consider helm script for doing the deployments 
-            
       - name: Deploy to Kubernetes
         run: |
             pwd
