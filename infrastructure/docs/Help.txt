@@ -30,15 +30,3 @@ kubectl --namespace monitoring get secrets prometheus-grafana -o jsonpath="{.dat
 # Access grafana in local
 export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=prometheus" -oname)
 kubectl --namespace monitoring port-forward $POD_NAME 3000
-
-# Grafana user & password
-admin
-prom-operator
-
-echo "# Terraform-eks-devops" >> README.md
-git init
-git add .
-git commit -m "Set up repo with Infrastructure & Application code"
-git branch -M main
-git remote add origin git@github.com:Mduletsie7/Terraform-eks-devops.git
-git push -u origin main
