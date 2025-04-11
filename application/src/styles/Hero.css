@@ -4,7 +4,7 @@
   background-size: cover; /* Cover the entire container */
   background-repeat: no-repeat;
   background-position: center; /* Center the background image */
-  background-color: burlywood; /* Adjust the last value (0.5) for opacity */
+  background-color: red; /* Adjust the last value (0.5) for opacity */
     color: black;
     height: 100vh;
     display: flex;
