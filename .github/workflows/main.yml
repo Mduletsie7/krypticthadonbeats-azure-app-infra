@@ -86,12 +86,6 @@ jobs:
           kubectl cluster-info
           kubectl get namespaces
 
-      - name: Uninstall existing Prometheus
-        run: |
-          helm uninstall prometheus --namespace monitoring
-          # Optional: Delete the namespace if you want a completely clean slate
-          kubectl delete namespace monitoring --ignore-not-found=true
-
       - name: Install Prometheus
         run: |
           # Add Helm repo (if not already present)
