@@ -3,7 +3,7 @@
 This project is a full-stack DevOps deployment of a React-based website designed to sell music beats. It showcases an end-to-end CI/CD pipeline, containerization, and infrastructure as code on AWS, aimed at automating deployment and improving scalability, cost efficiency, and infrastructure management.
 
 ## 🚀 Live Demo
-> Coming soon (Optional: Add your live site URL if available)
+> Coming soon
 
 ---
 
