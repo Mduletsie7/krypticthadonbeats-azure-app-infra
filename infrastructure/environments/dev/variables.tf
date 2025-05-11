@@ -16,13 +16,13 @@ variable "tags" {
 variable "vpc_name" {
   type        = string
   description = "name of the vpc to be created"
-  default     = "mdu-eks-vpc"
+  default     = "kryptic-eks-vpc"
 }
 
 variable "vpc_cidr" {
   type        = string
   description = "vpc cidr block to be used"
-  default     = "10.0.0.0/16"
+  default     = "10.1.0.0/16"
 }
 
 variable "k8s_version" {

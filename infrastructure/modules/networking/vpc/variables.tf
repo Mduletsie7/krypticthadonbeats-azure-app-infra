@@ -1,6 +1,6 @@
 variable "vpc_name" {
   type = string
-  default = "mdu-eks-vpc"
+  default = "kryptic-eks-vpc"
 }
 
 variable "tags" {
@@ -13,7 +13,7 @@ variable "vpc_cidr" {
   type        = string
   description = <<EOT
     vpc cidr
-    e.g. 10.0.0.0/16
+    e.g. 10.1.0.0/16
   EOT
 }
 
