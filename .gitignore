@@ -1,5 +1,7 @@
+# Terraform
+
 # Local Terraform directories
-**/.terraform/*
+**/.terraform/
 **/.terraform.lock.hcl
 
 # Terraform state files
@@ -15,21 +17,6 @@ crash.*.log
 .terraformrc
 terraform.rc
 
-# IDE-specific files
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Environment files
-.env
-.env.*
-*.tfvars
-*.tfvars.json
-
-# Lock files
-.terraform.lock.hcl
-
 # Plan output files
 *.tfplan
 *.plan
@@ -38,7 +25,7 @@ plan.out
 # Debug files
 debug.log
 
-# Local override files
+# Override and generated files
 override.tf
 override.tf.json
 *_override.tf
@@ -47,26 +34,45 @@ override.tf.json
 # Cost estimation files
 infracost-usage.yml
 
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Sensitive variable files
+*.tfvars
+*.tfvars.json
+.env
+.env.*
 
-# dependencies
-/node_modules
-/.pnp
+# Node.js / React
+
+# Dependencies
+node_modules/
+.pnp/
 .pnp.js
 
-# testing
-/coverage
+# Build and coverage
+build/
+coverage/
 
-# production
-/build
-
-# misc
-.DS_Store
+# Environment files
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Docker
+
+*.tar
+*.img
+docker-compose.override.yml
+
+# Editor / OS Files
+
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
