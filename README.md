@@ -35,6 +35,8 @@ This project is a full-stack DevOps deployment of a React-based website designed
 
 ## 🧩 Architecture Overview
 
+![432502345-82af8fdf-6b75-4c17-bef4-9f2a1c5810d8](https://github.com/user-attachments/assets/300d3edc-ff63-482c-8ac2-bd5d2196c3ca)
+
 [React App] → [Docker Container] → [GitHub Actions CI/CD]
 → Build → Push to [ECR] → Deploy to [ECS (Fargate)]
 
