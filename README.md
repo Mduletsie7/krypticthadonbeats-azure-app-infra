@@ -59,7 +59,7 @@ S3 Bucket + DynamoDB (for state management)
 git clone https://github.com/your-username/kryptic-tha-don-beats.git
 cd kryptic-tha-don-beats
 
-2. Set Up Infrastructure
+### 2. Set Up Infrastructure
 
 Ensure you have AWS CLI, Terraform, and AWS credentials configured.
 
@@ -69,7 +69,7 @@ terraform init
 terraform plan
 terraform apply
 
-3. Configure CI/CD Secrets
+### 3. Configure CI/CD Secrets
 Add the following to your GitHub repository secrets:
 
 AWS_ACCESS_KEY_ID
@@ -80,7 +80,7 @@ AWS_REGION
 
 ECR_REPOSITORY_URL
 
-4. GitHub Actions Deployment
+### 4. GitHub Actions Deployment
 Pushing to the develop branch will:
 
 Build the Docker image.
