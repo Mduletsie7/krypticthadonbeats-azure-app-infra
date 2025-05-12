@@ -50,10 +50,9 @@ jobs:
       - name: Docker Hub Login
         env:
           DOCKER_SCOUT_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_SCOUT_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          DOCKER_SCOUT_TOKEN: ${{ secrets.DOCKER_SCOUT_TOKEN }}
         run: | 
-          mkdir -p ~/.docker
-          echo "${DOCKER_SCOUT_HUB_PASSWORD}" | docker --config ~/.docker login -u "${DOCKER_SCOUT_HUB_USERNAME}" --password-stdin
+          echo "${DOCKER_SCOUT_TOKEN}" | docker  login -u "${DOCKER_SCOUT_HUB_USERNAME}" --password-stdin
 
       - name: Set Up Docker Scout
         run: | 
@@ -62,7 +61,7 @@ jobs:
 
       - name: Full CVE scan
         run: |
-          docker --config ~/.docker scout cves ${{ env.ORG_NAME }}/${{ env.REPO_NAME }}:${{ github.sha }}
+          docker scout cves ${{ env.ORG_NAME }}/${{ env.REPO_NAME }}:${{ github.sha }}
 
       # - name: Quickview Scan w/fail conditions 
       #   run: | 
