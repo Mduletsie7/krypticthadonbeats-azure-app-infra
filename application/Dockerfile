@@ -1,18 +1,21 @@
-# Use the official Node.js 14 image as the base image
-FROM node:latest
-
-# Set the working directory inside the container
-# This directory will be created for you if it does not exist
+# Stage 1
+FROM node:20-alpine as builder
 WORKDIR /app
-
-# Copy files to working dir
+COPY package*.json ./
+RUN npm ci
 COPY . .
+RUN npm run build
 
-# Install dependencies
-RUN npm install
+# Stage 2
+FROM node:20-alpine
 
-# Export the port on which the application will run
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
 EXPOSE 3000
-
-# Script to start the application
-CMD [ "npm" , "start" ]
+CMD [ "npm", "start" ]
