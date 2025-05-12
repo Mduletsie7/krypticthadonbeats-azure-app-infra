@@ -9,7 +9,7 @@ on:
     branches: [main]
     
 env:
-  ORG_NAME: mdulearning/
+  ORG_NAME: mdulearning
   REPO_NAME : krypticthadonbeats-dev
 
 jobs:
