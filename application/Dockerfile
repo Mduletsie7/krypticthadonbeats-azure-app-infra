@@ -14,8 +14,8 @@ WORKDIR /app
 RUN npm install -g serve
 
 COPY --from=builder /app/build ./build
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
+
+RUN npm cache clean --force
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
