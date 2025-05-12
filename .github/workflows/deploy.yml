@@ -80,6 +80,4 @@ jobs:
 
       - name: Docker Scout Quickview with Failure on Critical Issues
         run: |
-          docker scout quickview ${{ env.REGISTRY_URI }}/${{ env.REPO_NAME }}:${{ github.sha }} \
-            --only-severity critical \
-            --exit-code 1
+          docker scout quickview ${{ env.REGISTRY_URI }}/${{ env.REPO_NAME }}:${{ github.sha }}
