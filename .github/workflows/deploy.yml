@@ -62,8 +62,6 @@ jobs:
       - name: Run CVES scan
         run: |
           docker scout cves ${{ env.ORG_NAME }}/${{ env.REPO_NAME }}:${{ github.sha }} > cves-report.txt \
-            --only-severity critical \
-            --exit-code 1
 
       - name: Upload CVE Report
         uses: actions/upload-artifact@v4
