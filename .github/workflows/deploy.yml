@@ -77,3 +77,9 @@ jobs:
         with:
           name: cves-scan-report
           path: cves-report.txt
+
+      - name: Docker Scout Quickview with Failure on Critical Issues
+        run: |
+          docker scout quickview ${{ env.REGISTRY_URI }}/${{ env.REPO_NAME }}:${{ github.sha }} \
+            --only-severity critical \
+            --exit-code 1
