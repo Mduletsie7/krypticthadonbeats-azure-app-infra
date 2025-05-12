@@ -10,7 +10,10 @@ RUN npm run build
 FROM node:20-alpine
 
 WORKDIR /app
-COPY --from=builder /app/dist ./dist
+
+RUN npm install -g serve
+
+COPY --from=builder /app/build ./build
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 
@@ -18,4 +21,4 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
 EXPOSE 3000
-CMD [ "npm", "start" ]
+CMD [ "serve", "-s", "build", "-l", "3000" ]
