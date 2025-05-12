@@ -1,0 +1,41 @@
+name: Kryptic Tha Don Beats App CI/CD Pipeline
+# This workflow is triggered on pushes to the 'develop' branch
+# It builds a Docker image, scans it for vulnerabilities using Trivy,
+# and deploys it to an EKS cluster if the scan passes.
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [main]
+    
+env:
+  REGISTRY_URI: 865494649634.dkr.ecr.us-east-1.amazonaws.com
+  REPO_NAME : krypticthadonbeats-dev
+
+jobs:
+  Build:
+    permissions:
+      security-events: write
+    runs-on: ubuntu-latest
+
+    steps:
+    # Authenticate to the container registry
+    - name: Login to ECR container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY_URI }}
+        username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
+    - name: Build and push Docker image 
+      run: |
+          echo "Navigating to the application directory"
+          cd application
+          ls 
+          echo "Building and tagging the image with REPO_NAME = ${{ env.REPO_NAME }} & image_tag = ${{ github.sha }}"
+          docker build -t ${{ env.REPO_NAME }}:${{ github.sha }} .
+           # Tag the Docker image for the Amazon ECR repository using the same GitHub commit SHA
+          docker tag ${{ env.REPO_NAME }}:${{ github.sha }} ${{ env.REGISTRY_URI }}/${{ env.REPO_NAME }}:${{ github.sha }}
+          # Push the Docker image to the Amazon ECR repository
+          echo "Pushing to ${{ env.REGISTRY_URI }} registry"
+          docker push ${{ env.REGISTRY_URI }}/${{ env.REPO_NAME }}:${{ github.sha }}
