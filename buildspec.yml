@@ -4,7 +4,6 @@ env:
   variables:
     AWS_REGION: us-east-1
     REPO_NAME: krypticthadonbeats-dev
-    ACCOUNT_ID: 865494649634
 
 phases:
   pre_build:
