@@ -3,16 +3,20 @@ version: 0.2
 env:
   variables:
     AWS_REGION: us-east-1
+    REPO_NAME: krypticthadonbeats-dev
+    ACCOUNT_ID: 865494649634
 
 phases:
   pre_build:
     commands:
-      - echo Logging in to Amazon ECR...
-      - IMAGE_TAG=${ECR_IMAGE_TAG}
-      - REPO_NAME=${ECR_REPOSITORY_NAME}
-      - ACCOUNT_ID=${ECR_ACCOUNT_ID}
+      - echo Setting ECR URI...
       - ECR_URI="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}"
-      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+
+      - echo Getting latest image tag from ECR...
+      - IMAGE_TAG=$(aws ecr list-images --repository-name $REPO_NAME --region $AWS_REGION --query 'imageIds[*].imageTag' --output text | tr '\t' '\n' | grep -v null | head -n1)
+
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
       - echo Retrieving Docker Hub credentials...
       - CREDS=$(aws secretsmanager get-secret-value --secret-id docker-hub-credentials --region $AWS_REGION --query SecretString --output text)
