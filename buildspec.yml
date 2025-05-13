@@ -1,0 +1,41 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: us-east-1
+    REPO_NAME: krypticthadonbeats-dev
+
+phases:
+  pre_build:
+    commands:
+      - echo Setting ECR URI...
+      - ECR_URI="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}"
+
+      - echo Getting latest image tag from ECR...
+      - IMAGE_TAG=$(aws ecr list-images --repository-name $REPO_NAME --region $AWS_REGION --query 'imageIds[*].imageTag' --output text | tr '\t' '\n' | grep -v null | head -n1)
+
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+      - echo Retrieving Docker Hub credentials...
+      - CREDS=$(aws secretsmanager get-secret-value --secret-id docker-hub-credentials --region $AWS_REGION --query SecretString --output text)
+      - DOCKER_USERNAME=$(echo $CREDS | jq -r '.username')
+      - DOCKER_PASSWORD=$(echo $CREDS | jq -r '.password')
+
+      - echo Logging in to Docker Hub...
+      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+
+  build:
+    commands:
+      - echo Pulling image from ECR...
+      - docker pull $ECR_URI:$IMAGE_TAG
+
+      - echo Tagging image for Docker Hub...
+      - docker tag $ECR_URI:$IMAGE_TAG $DOCKER_USERNAME/$REPO_NAME:$IMAGE_TAG
+
+      - echo Pushing image to Docker Hub...
+      - docker push $DOCKER_USERNAME/$REPO_NAME:$IMAGE_TAG
+
+artifacts:
+  files:
+    - '**/*'
