@@ -31,7 +31,7 @@ jobs:
         
     - name: Build and push Docker image 
       run: |
-          echo "Navigating to the application front directory"
+          echo "Navigating to the application frontend directory"
           cd application/frontend
           ls 
           echo "Building and tagging the image with REPO_NAME = ${{ env.REPO_NAME }} & image_tag = ${{ github.sha }}"

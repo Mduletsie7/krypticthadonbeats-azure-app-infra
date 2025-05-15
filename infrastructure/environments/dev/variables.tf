@@ -1,35 +1,30 @@
+variable "module_root" {
+  type = string
+  description = "value"
+  default = "../../modules/"
+}
+
 variable "env" {
   type        = string
   description = "The environment name (e.g., dev, prod)"
 }
 
+variable "project_name" {
+  type = string
+  description = "The name of the project"
+}
+
 variable "tags" {
   type = map(string)
   default = {
-    "Project"     = "Kryptic-Terraform-Devops"
+    "Project"     = "krypticthadon-app-infra"
     "Environment" = "Dev"
     "Owner"       = "Mdumisi Kelvin Letsie"
   }
   description = "Common tags to apply to all resources"
 }
 
-variable "vpc_name" {
-  type        = string
-  description = "name of the vpc to be created"
-  default     = "kryptic-eks-vpc"
-}
 
-variable "vpc_cidr" {
-  type        = string
-  description = "vpc cidr block to be used"
-  default     = "10.1.0.0/16"
-}
-
-variable "k8s_version" {
-  type        = string
-  description = "kubernetes version"
-  default     = "1.32"
-}
 
 variable "force_delete" {
   type = bool
