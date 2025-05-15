@@ -38,7 +38,8 @@ This project is a full-stack DevOps deployment of a React-based website designed
 ![432502345-82af8fdf-6b75-4c17-bef4-9f2a1c5810d8](https://github.com/user-attachments/assets/300d3edc-ff63-482c-8ac2-bd5d2196c3ca)
 
 ### 🛠 CICD Pipeline Design V1
-![cicd-pipeline-design-v1](https://github.com/user-attachments/assets/0e675b92-3dd8-4071-b330-4788b6e0fa1e)
+![cicd-pipeline-design-v1](https://github.com/user-attachments/assets/40476bb5-5c06-4802-bc68-e6f60664feda)
+
 
 
 [React App] → [Docker Container] → [GitHub Actions CI/CD]
