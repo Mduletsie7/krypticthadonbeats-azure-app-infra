@@ -1,12 +1,6 @@
-variable "module_root" {
-  type = string
-  description = "value"
-  default = "../../modules/"
-}
-
 variable "env" {
+  description = "Deployment environment (e.g., dev, prod)"
   type        = string
-  description = "The environment name (e.g., dev, prod)"
 }
 
 variable "project_name" {
@@ -18,15 +12,30 @@ variable "tags" {
   type = map(string)
   default = {
     "Project"     = "krypticthadon-app-infra"
-    "Environment" = "Dev"
     "Owner"       = "Mdumisi Kelvin Letsie"
+    "Terraform" = "True"
+    "Environment" = "Dev"
   }
   description = "Common tags to apply to all resources"
 }
 
-
-
-variable "force_delete" {
-  type = bool
-  default = true
+variable "cidr_block" {
+  description = "The CIDR block for the VPC"
+  type        = string
 }
+
+variable "availability_zones" {
+  description = "value"
+  type = list(string)
+  default = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
+}
+
+variable "public_subnets" {
+  type = list(string)
+  default = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  }
+
+variable "private_subnets" {
+  type = list(string)
+  default = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
+  }
