@@ -1,5 +1,6 @@
 locals {
   project_name = "krypticthadonbeats"
+  region = "us-east-1"
 }
 
 # terrafom plan --var-file=dev.tfvars
