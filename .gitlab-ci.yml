@@ -44,7 +44,10 @@ container_scanning:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
-    - apk add --no-cache curl
+    - apk add --no-cache curl aws-cli
+    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+    - aws configure set region "$AWS_REGION"
   script:
       # Login to ECR
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
