@@ -7,6 +7,7 @@ variables:
   REPO_NAME: krypticthadonbeats-dev
   DOCKER_TAG: $CI_COMMIT_SHA
   DOCKER_IMAGE: $REGISTRY_URI/$REPO_NAME:$DOCKER_TAG
+  AWS_REGION: us-east-1
 
 build:
   stage: build
