@@ -1,57 +1,44 @@
 stages:
   - build
   - test
-  - scan
+  - code_scanning
+  - build_image
+  - container_scanning
   - deploy
 
-workflow:
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+include:
+  - template: Container-Scanning.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Secret-Detection.gitlab-ci.yml
+  # - template: DAST-API.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: SAST-IaC.gitlab-ci.yml
 
-variables:
-  REGISTRY_URI: 865494649634.dkr.ecr.us-east-1.amazonaws.com
-  REPO_NAME: krypticthadonbeats-dev
-  IMAGE_TAG: $CI_COMMIT_SHA
-
-image: ubuntu:latest
-
-before_script:
-  - apt-get update && apt-get install -y curl unzip
-  - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  - unzip awscliv2.zip
-  - ./aws/install
-  - echo "Logging into ECR..."
-  - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
-
-build:
+build-job:       # This job runs in the build stage, which runs first.
   stage: build
-  image: docker:latest
-  services:
-    - docker:dind
   script:
-    - echo "Navigating to application frontend"
-    - cd application/frontend
-    - ls
-    - echo "Building Docker image $REPO_NAME:$IMAGE_TAG"
-    - docker build -t $REPO_NAME:$IMAGE_TAG .
-    - docker tag $REPO_NAME:$IMAGE_TAG $REGISTRY_URI/$REPO_NAME:$IMAGE_TAG
-    - echo "Pushing image to ECR"
-    - docker push $REGISTRY_URI/$REPO_NAME:$IMAGE_TAG
+    - echo "Compiling the code..."
+    - echo "Compile complete."
 
-container_scanning:
-  stage: scan
-  dependencies:
-    - build
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
   script:
-    - echo "Setting up Docker Scout"
-    - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-    - sh install-scout.sh
-    - echo "$DOCKER_SCOUT_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-    - echo "Scanning image for CVEs"
-    - docker scout cves $REGISTRY_URI/$REPO_NAME:$IMAGE_TAG > cves-report.txt
-    - echo "Performing Docker Scout quickview (failing on critical issues)"
-    - docker scout quickview $REGISTRY_URI/$REPO_NAME:$IMAGE_TAG
-  artifacts:
-    paths:
-      - cves-report.txt
+    - echo "Running unit tests... This will take about 60 seconds."
+    - sleep 60
+    - echo "Code coverage is 90%"
+
+lint-test-job:   # This job also runs in the test stage.
+  stage: test    # It can run at the same time as unit-test-job (in parallel).
+  script:
+    - echo "Linting code... This will take about 10 seconds."
+    - sleep 10
+    - echo "No lint issues found."
+
+deploy-job:      # This job runs in the deploy stage.
+  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  environment: production
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."
+  
+
