@@ -10,12 +10,21 @@ variables:
 
 build:
   stage: build
-  image: docker:latest
+  image: 
+    name: amazon/aws-cli:latest
+    entrypoint: [""]
   services:
     - docker:dind
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
+  before_script:
+  - apk add --no-cache docker
+  - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+  - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+  - aws configure set region "$AWS_REGION"
   script:
+      # Login to ECR
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY_URI
     - echo "Navigating to the application front directory"
     - cd application/frontend
     - ls
