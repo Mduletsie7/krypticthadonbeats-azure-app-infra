@@ -55,5 +55,3 @@ container_scanning:
   artifacts:
     paths:
       - cves-report.txt
-    reports:
-      artifact_type: archive
