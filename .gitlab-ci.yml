@@ -7,7 +7,6 @@ variables:
   REPO_NAME: krypticthadonbeats-dev
   DOCKER_TAG: $CI_COMMIT_SHA
   DOCKER_IMAGE: $REGISTRY_URI/$REPO_NAME:$DOCKER_TAG
-  AWS_REGION: us-east-1
 
 build:
   stage: build
@@ -47,7 +46,8 @@ container_scanning:
   before_script:
     - apk add --no-cache curl
   script:
-    - echo "$AWS_ACCESS_KEY_ID" | docker login -u "$AWS_ACCESS_KEY_ID" --password-stdin $REGISTRY_URI
+      # Login to ECR
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
     # Install Docker Scout
     - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
     - sh install-scout.sh
