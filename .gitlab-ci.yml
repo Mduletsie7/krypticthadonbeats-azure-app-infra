@@ -10,26 +10,30 @@ variables:
 
 build:
   stage: build
-  image: 
-    name: amazon/aws-cli:latest
-    entrypoint: [""]
+  image: docker:latest
   services:
     - docker:dind
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
+  before_script:
+    - apk add --no-cache aws-cli
+    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+    - aws configure set region "$AWS_REGION"
   script:
-      # Login to ECR
-    - aws ecr get-login-password | docker login --username AWS --password-stdin $REGISTRY_URI
-    - echo "Navigating to the application front directory"
+    # Login to ECR
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
+    
+    # Build and push Docker image
+    - echo "Building Docker image..."
     - cd application/frontend
-    - ls
-    - echo "Building and tagging the image with REPO_NAME = $REPO_NAME & image_tag = $DOCKER_TAG"
     - docker build -t $REPO_NAME:$DOCKER_TAG .
     - docker tag $REPO_NAME:$DOCKER_TAG $DOCKER_IMAGE
-    - echo "Pushing to $REGISTRY_URI registry"
+    - echo "Pushing to ECR..."
     - docker push $DOCKER_IMAGE
   after_script:
     - docker logout $REGISTRY_URI
+
 
 container_scanning:
   stage: scan
