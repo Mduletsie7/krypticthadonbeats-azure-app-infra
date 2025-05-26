@@ -24,10 +24,6 @@ before_script:
   - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
   - aws configure set region "$AWS_REGION"
 
-.ecr-login: &ecr_login_script
-  aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
-  
-
 build:
   stage: build
   image: docker:latest
@@ -37,7 +33,7 @@ build:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   <<: *aws_config
   script:
-    - *ecr_login_script
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
     - echo "Building Docker image..."
     - cd application/frontend
     - docker build -t $REPO_NAME:$IMAGE_TAG .
@@ -58,7 +54,7 @@ container_scanning:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   <<: *aws_config
   script:
-    - *ecr_login_script
+    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
     # Install Docker Scout
     - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
     - sh install-scout.sh
