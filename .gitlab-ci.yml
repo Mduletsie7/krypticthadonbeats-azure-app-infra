@@ -16,6 +16,18 @@ variables:
   IMAGE_TAG: $CI_COMMIT_SHA
   DOCKER_IMAGE: $REGISTRY_URI/$REPO_NAME:$IMAGE_TAG
 
+# Anchors
+.aws-config: &aws_config
+before_script:
+  - apk add --no-cache aws-cli
+  - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
+  - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
+  - aws configure set region "$AWS_REGION"
+
+.ecr-login: &ecr_login_script
+  - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
+  
+
 build:
   stage: build
   image: docker:latest
@@ -23,16 +35,9 @@ build:
     - docker:dind
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
-  before_script:
-    - apk add --no-cache aws-cli
-    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-    - aws configure set region "$AWS_REGION"
+  <<: *aws_config
   script:
-    # Login to ECR
-    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
-    
-    # Build and push Docker image
+    - *ecr_login_script
     - echo "Building Docker image..."
     - cd application/frontend
     - docker build -t $REPO_NAME:$IMAGE_TAG .
@@ -51,14 +56,9 @@ container_scanning:
   needs: ["build"]
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
-  before_script:
-    - apk add --no-cache curl aws-cli
-    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-    - aws configure set region "$AWS_REGION"
+  <<: *aws_config
   script:
-      # Login to ECR
-    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
+    - *ecr_login_script
     # Install Docker Scout
     - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
     - sh install-scout.sh
