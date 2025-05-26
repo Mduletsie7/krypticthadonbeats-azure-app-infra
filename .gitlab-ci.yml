@@ -31,7 +31,7 @@ build:
     - docker:dind
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
-  <<: *aws_config
+    - *aws_config
   script:
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
     - echo "Building Docker image..."
@@ -52,7 +52,7 @@ container_scanning:
   needs: ["build"]
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
-  <<: *aws_config
+    - *aws_config
   script:
     - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
     # Install Docker Scout
