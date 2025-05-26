@@ -2,6 +2,7 @@ stages:
   - build
   - test
   - scan
+  - deploy
 
 include:
   - template: Security/SAST.gitlab-ci.yml
@@ -12,8 +13,8 @@ include:
 variables:
   REGISTRY_URI: 865494649634.dkr.ecr.us-east-1.amazonaws.com
   REPO_NAME: krypticthadonbeats-dev
-  DOCKER_TAG: $CI_COMMIT_SHA
-  DOCKER_IMAGE: $REGISTRY_URI/$REPO_NAME:$DOCKER_TAG
+  IMAGE_TAG: $CI_COMMIT_SHA
+  DOCKER_IMAGE: $REGISTRY_URI/$REPO_NAME:$IMAGE_TAG
 
 build:
   stage: build
@@ -34,8 +35,8 @@ build:
     # Build and push Docker image
     - echo "Building Docker image..."
     - cd application/frontend
-    - docker build -t $REPO_NAME:$DOCKER_TAG .
-    - docker tag $REPO_NAME:$DOCKER_TAG $DOCKER_IMAGE
+    - docker build -t $REPO_NAME:$IMAGE_TAG .
+    - docker tag $REPO_NAME:$IMAGE_TAG $DOCKER_IMAGE
     - echo "Pushing to ECR..."
     - docker push $DOCKER_IMAGE
   after_script:
@@ -73,3 +74,11 @@ container_scanning:
     when: always
   after_script:
     - docker logout $REGISTRY_URI
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+  script:
+    - echo "Getting ready for lift off... 3... 2... 1... Deployed!"
