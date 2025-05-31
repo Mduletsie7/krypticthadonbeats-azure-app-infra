@@ -32,7 +32,7 @@ build_compile:
   script:
     - cd application/frontend
     - npm ci 
-    - unset ci
+    - unset CI
     - npm run build
   artifacts:
     paths:
