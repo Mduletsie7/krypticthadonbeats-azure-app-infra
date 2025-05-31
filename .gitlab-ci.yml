@@ -1,7 +1,9 @@
 stages:
-  - build
+  - build_compile
   - test
-  - scan
+  - code_scanning
+  - build_image
+  - container_scanning
   - deploy
 
 include:
@@ -22,6 +24,28 @@ variables:
     - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
     - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
     - aws configure set region "$AWS_REGION"
+
+
+build_compile:
+  stage: build_compile
+  image: node:20-alpine
+  script:
+    - cd application/frontend
+    - npm ci 
+    - npm run build
+  artifacts:
+    paths:
+      - "application/frontend/dist"
+
+test:
+  stage: test
+  image: node:20-alpine
+  dependencies:
+    - build_compile 
+  script:
+    - cd application/frontend
+    - npm ci
+    - npm run test -- --watchAll=false
 
 build:
   stage: build
