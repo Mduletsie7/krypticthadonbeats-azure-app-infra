@@ -47,8 +47,8 @@ test:
     - npm ci
     - npm run test -- --watchAll=false
 
-build:
-  stage: build
+build_image:
+  stage: build_image
   image: docker:latest
   services:
     - docker:dind
@@ -69,11 +69,11 @@ build:
 
 
 container_scanning:
-  stage: scan
+  stage: container_scanning
   image: docker:latest
   services:
     - docker:dind
-  needs: ["build"]
+  needs: ["build_image"]
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
