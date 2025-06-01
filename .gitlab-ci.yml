@@ -73,6 +73,7 @@ container_scanning:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
+    - apk add --no-cache curl
     - *azure_login
   script:
     # Install Docker Scout
