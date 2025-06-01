@@ -13,17 +13,14 @@ include:
   - template: Security/Secret-Detection.gitlab-ci.yml
 
 variables:
-  REGISTRY_URI: 865494649634.dkr.ecr.us-east-1.amazonaws.com
-  REPO_NAME: krypticthadonbeats-dev
+  REGISTRY_URI: $AZURE_REGISTRY
+  REGISTRY_NAME: $AZURE_REGISTRY_NAME
   IMAGE_TAG: $CI_COMMIT_SHA
   DOCKER_IMAGE: $REGISTRY_URI/$REPO_NAME:$IMAGE_TAG
 
 # Anchors
-.aws-config: &aws_config
-    - apk add --no-cache aws-cli
-    - aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID"
-    - aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY"
-    - aws configure set region "$AWS_REGION"
+.azure-login: &azure_login
+  - echo "$AZURE_PASSWORD" | docker login $AZURE_REGISTRY -u "$AZURE_USERNAME" --password-stdin
 
 
 build_compile:
@@ -56,18 +53,16 @@ build_image:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
-    - *aws_config
+    - *azure_login
   script:
-    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
     - echo "Building Docker image..."
     - cd application/frontend
-    - docker build -t $REPO_NAME:$IMAGE_TAG .
-    - docker tag $REPO_NAME:$IMAGE_TAG $DOCKER_IMAGE
-    - echo "Pushing to ECR..."
+    - docker build -t $AZURE_REGISTRY_NAME:$IMAGE_TAG .
+    - docker tag $AZURE_REGISTRY_NAME:$IMAGE_TAG $DOCKER_IMAGE
+    - echo "Pushing to ACR..."
     - docker push $DOCKER_IMAGE
   after_script:
     - docker logout $REGISTRY_URI
-
 
 container_scanning:
   stage: container_scanning
@@ -78,9 +73,8 @@ container_scanning:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
-    - *aws_config
+    - *azure_login
   script:
-    - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY_URI
     # Install Docker Scout
     - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
     - sh install-scout.sh
@@ -88,7 +82,6 @@ container_scanning:
     - echo "$DOCKER_SCOUT_TOKEN" | docker login -u "$DOCKER_SCOUT_HUB_USERNAME" --password-stdin
     # Run CVES scan
     - docker scout cves $DOCKER_IMAGE > cves-report.txt
-    # Quickview with potential failure on critical issues
     - docker scout quickview $DOCKER_IMAGE
   artifacts:
     paths:
