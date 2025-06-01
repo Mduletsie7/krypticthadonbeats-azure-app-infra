@@ -23,17 +23,17 @@ variables:
   - echo "$AZURE_PASSWORD" | docker login $AZURE_REGISTRY -u "$AZURE_USERNAME" --password-stdin
 
 
-build_compile:
-  stage: build_compile
-  image: node:20-alpine
-  script:
-    - cd application/frontend
-    - npm ci 
-    - unset CI
-    - npm run build
-  artifacts:
-    paths:
-      - "application/frontend/dist"
+# build_compile:
+#   stage: build_compile
+#   image: node:20-alpine
+#   script:
+#     - cd application/frontend
+#     - npm ci 
+#     - unset CI
+#     - npm run build
+#   artifacts:
+#     paths:
+#       - "application/frontend/dist"
 
 # test:
 #   stage: test
@@ -57,7 +57,7 @@ build_image:
   script:
     - echo "Building Docker image..."
     - cd application/frontend
-    - docker build -t $DOCKER_IMAGE.
+    - docker build -t $AZURE_REGISTRY_NAME.
     - docker tag $AZURE_REGISTRY_NAME:$IMAGE_TAG $DOCKER_IMAGE
     - echo "Pushing to ACR..."
     - docker push $DOCKER_IMAGE
