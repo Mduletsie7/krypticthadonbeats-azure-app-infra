@@ -16,7 +16,7 @@ variables:
   REGISTRY_URI: $AZURE_REGISTRY
   REGISTRY_NAME: $AZURE_REGISTRY_NAME
   IMAGE_TAG: $CI_COMMIT_SHA
-  DOCKER_IMAGE: $REGISTRY_URI/$REGISTRY_NAME/$IMAGE_TAG
+  DOCKER_IMAGE: $REGISTRY_URI/$REGISTRY_NAME:$IMAGE_TAG
 
 # Anchors
 .azure-login: &azure_login
@@ -59,7 +59,7 @@ build_image:
     - cd application/frontend
     - docker build -t $AZURE_REGISTRY_NAME:$IMAGE_TAG .
     - docker tag $AZURE_REGISTRY_NAME:$IMAGE_TAG $DOCKER_IMAGE
-    - echo "Pushing to ACR..."
+    - echo "Pushing to ACR with tag $IMAGE_TAG "
     - docker push $DOCKER_IMAGE
   after_script:
     - docker logout $REGISTRY_URI
