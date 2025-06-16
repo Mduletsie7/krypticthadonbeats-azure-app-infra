@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import '../styles/NotableCredits.css';
 import MusicPlayer from './MusicPlayer';
 
-const NotableCredits = () => {
-  const [credits, setCredits] = useState([]);
-
+const ProductionCredits = () => {
   const staticCreditsData = [
     { id: 1, title: 'Forever Blessed', artist: 'Kryptic Tha Don (ft. Neeks BTP)', artworkKey: 'images/FengSui.jpg', audioKey: 'music/Neeks_ForeverBlessed.mp3' },
     { id: 2, title: 'Broken House', artist: 'Bugzy Niaire', artworkKey: 'images/BrokenHouse.jpg', audioKey: 'music/BugzyNiaire_BrokenHouse.mp3' },
@@ -15,44 +13,15 @@ const NotableCredits = () => {
     { id: 7, title: 'Bros 4 Life', artist: 'Greenland Label', artworkKey: 'images/Bros4Life.jpg', audioKey: 'music/GreenlandCak_BORN-KINGS.mp3' },
   ];
 
-useEffect(() => {
-  const fetchSignedUrls = async () => {
-    try {
-      const resolved = await Promise.all(staticCreditsData.map(async (credit) => {
-        const [artworkRes, audioRes] = await Promise.all([
-          fetch(`/signed-url?key=${encodeURIComponent(credit.artworkKey)}`),
-          fetch(`/signed-url?key=${encodeURIComponent(credit.audioKey)}`)
-        ]);
-
-        const artworkJson = await artworkRes.json();
-        const audioJson = await audioRes.json();
-
-        return {
-          ...credit,
-          artwork: artworkJson.url || '',
-          audio: audioJson.url || ''
-        };
-      }));
-
-      setCredits(resolved);
-    } catch (err) {
-      console.error('Error fetching signed URLs:', err);
-    }
-  };
-
-  fetchSignedUrls();
-}, []);
-
-
   return (
     <div className="notable-credits">
       <div className="album-list">
-        {credits.map((credit) => (
+        {staticCreditsData.map((credit) => (
           <div key={credit.id} className="album-item">
-            {credit.artwork && (
-              <img src={credit.artwork} alt={`Album artwork for ${credit.title}`} />
+            {credit.artworkKey && (
+              <img src={credit.artworkKey} alt={`Album artwork for ${credit.title}`} />
             )}
-            {credit.audio && <MusicPlayer audioSource={credit.audio} />}
+            {credit.audioKey && <MusicPlayer audioSource={credit.audioKey} />}
             <div className="album-info">
               <strong>{credit.title}</strong> by {credit.artist}
             </div>
@@ -63,4 +32,4 @@ useEffect(() => {
   );
 };
 
-export default NotableCredits;
+export default ProductionCredits;

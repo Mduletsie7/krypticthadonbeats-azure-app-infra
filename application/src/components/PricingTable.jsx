@@ -2,7 +2,6 @@ import React from "react";
 import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-blue/theme.css";
 import 'primeicons/primeicons.css';
-import { Button } from "primereact/button";
 
 export const PricingTable = () => {
   return (

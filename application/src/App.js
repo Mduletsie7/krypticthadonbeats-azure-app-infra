@@ -4,7 +4,7 @@ import Header from './components/Header';
 import Hero from './components/Hero';
 import LeaseBeats from './components/LeaseBeats';
 import { PricingTable } from './components/PricingTable';
-import NotableCredits from './components/NotableCredits';
+import ProductionCredits from './components/ProductionCredits';
 import Footer from './components/Footer';
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
       <LeaseBeats />
       <PricingTable />
       <h1>Production Credits</h1>
-      <NotableCredits />
+      <ProductionCredits />
       <Footer />
     </div>
   );

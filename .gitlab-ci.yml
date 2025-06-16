@@ -23,17 +23,17 @@ variables:
   - echo "$AZURE_PASSWORD" | docker login $AZURE_REGISTRY -u "$AZURE_USERNAME" --password-stdin
 
 
-# build_compile:
-#   stage: build_compile
-#   image: node:20-alpine
-#   script:
-#     - cd application/frontend
-#     - npm ci 
-#     - unset CI
-#     - npm run build
-#   artifacts:
-#     paths:
-#       - "application/frontend/dist"
+build_compile:
+  stage: build_compile
+  image: node:20-alpine
+  script:
+    - cd application/
+    - npm ci 
+    - unset CI
+    - npm run build
+  artifacts:
+    paths:
+      - "application/dist"
 
 # test:
 #   stage: test
