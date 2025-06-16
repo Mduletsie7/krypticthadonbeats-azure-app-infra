@@ -16,13 +16,13 @@ output "container_app_id" {
   value       = azurerm_container_app.aca.id
 }
 
-output "managed_identity_id" {
-  description = "The ID of the managed identity"
-  value       = azurerm_user_assigned_identity.aca_identity.id
+output "container_app_environment_id" {
+  description = "The resource ID for the container app environment"
+  value = azurerm_container_app_environment.aca_environment.id
 }
 
-output "managed_identity_principal_id" {
-  description = "The principal ID of the managed identity"
-  value       = azurerm_user_assigned_identity.aca_identity.principal_id
+output "log_analytics_workspace_id" {
+  description = "ID of the Log Analytics Workspace"
+  value       = azurerm_log_analytics_workspace.log_analytics_ws.id
 }
 
