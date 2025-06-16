@@ -56,7 +56,7 @@ build_image:
     - *azure_login
   script:
     - echo "Building Docker image..."
-    - cd application/frontend
+    - cd application/
     - docker build -t $AZURE_REGISTRY_NAME:$IMAGE_TAG .
     - docker tag $AZURE_REGISTRY_NAME:$IMAGE_TAG $DOCKER_IMAGE
     - echo "Pushing to ACR with tag $IMAGE_TAG "
