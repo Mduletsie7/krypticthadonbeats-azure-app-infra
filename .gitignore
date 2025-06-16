@@ -37,7 +37,7 @@ infracost-usage.yml
 # Sensitive variable files
 *.tfvars
 *.tfvars.json
-.env
+*.env
 .env.*
 
 # Node.js / React
