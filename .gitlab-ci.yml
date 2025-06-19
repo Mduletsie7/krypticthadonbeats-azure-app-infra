@@ -83,7 +83,6 @@ sonarqube-check:
         -Dsonar.login=$SONAR_TOKEN
   only:
     - merge_requests
-    - main
     - develop
 
 container_scanning:
