@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Hero Component Snapshots matches snapshot 1`] = `
+<section
+  aria-label="Hero Section"
+  class="hero"
+  role="region"
+>
+  <div
+    class="hero-content"
+  >
+    <div
+      class="hero-text"
+    >
+      <h1>
+        <span
+          class="herotxt-kryptic"
+        >
+          Kryptic
+        </span>
+         Tha Don
+      </h1>
+      <p>
+        Music Producer from Cape Town, South africa with a passion for Hip-Hop.
+      </p>
+    </div>
+  </div>
+</section>
+`;
