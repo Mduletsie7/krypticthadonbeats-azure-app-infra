@@ -5,7 +5,7 @@ import "../styles/Hero.css";
 
 const Hero = () => {
   return (
-    <section className="hero">
+    <section className="hero" role="region" aria-label="Hero Section">
       <div className="hero-content">
         <div className="hero-text">
           <h1><span className="herotxt-kryptic">Kryptic</span> Tha Don</h1>
