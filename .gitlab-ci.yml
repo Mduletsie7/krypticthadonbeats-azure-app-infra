@@ -76,10 +76,10 @@ sonarqube-check:
   image: sonarsource/sonar-scanner-cli:latest
   stage: sonar_scan
   script:
-    - sonar-scanner \
-        -Dsonar.projectKey=krypticthadonbeats \
-        -Dsonar.sources=. \
-        -Dsonar.host.url=$SONAR_HOST_URL \
+    - sonar-scanner 
+        -Dsonar.projectKey=krypticthadonbeats 
+        -Dsonar.sources=. 
+        -Dsonar.host.url=$SONAR_HOST_URL 
         -Dsonar.login=$SONAR_TOKEN
   only:
     - merge_requests
