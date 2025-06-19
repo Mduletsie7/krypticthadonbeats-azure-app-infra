@@ -1,7 +1,7 @@
 // HeroSection.test.js
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import Hero from "../components/Hero"; // Adjust the path if needed
+import Hero from "../components/Hero"; 
 import '@testing-library/jest-dom';
 
 describe("Hero Section", () => {

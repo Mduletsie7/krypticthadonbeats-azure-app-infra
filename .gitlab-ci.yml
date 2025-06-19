@@ -1,6 +1,6 @@
 stages:
   - build_compile
-  - unit-tests
+  - test
   - code_scanning
   - sonar_scan
   - build_image
@@ -43,8 +43,8 @@ build_compile:
     paths:
       - "application/dist"
 
-test:
-  stage: unit-tests
+unit-tests:
+  stage: test
   image: node:20-alpine
   dependencies:
     - build_compile 
