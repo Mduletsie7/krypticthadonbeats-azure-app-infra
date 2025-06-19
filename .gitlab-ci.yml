@@ -43,15 +43,15 @@ build_compile:
     paths:
       - "application/dist"
 
-# test:
-#   stage: test
-#   image: node:20-alpine
-#   dependencies:
-#     - build_compile 
-#   script:
-#     - cd application/frontend
-#     - npm ci
-#     - npm run test -- --watchAll=false
+test:
+  stage: test
+  image: node:20-alpine
+  dependencies:
+     - build_compile 
+  script:
+    - cd application/frontend
+    - npm ci
+    - npm run test -- --watchAll=false
 
 build_image:
   stage: build_image
