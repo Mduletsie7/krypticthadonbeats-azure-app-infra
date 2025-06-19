@@ -52,6 +52,7 @@ unit-tests:
     - cd application
     - npm ci
     - npm test -- --coverage
+    - sed -i 's|SF:src\\|SF:src/|g' coverage/lcov.info
   allow_failure: true
 
 build_image:
@@ -79,7 +80,7 @@ sonarqube-check:
   script:
     - sonar-scanner 
         -Dsonar.projectKey=krypticthadonbeats 
-        -Dsonar.sources=. 
+        -Dsonar.sources=application/src 
         -Dsonar.host.url=$SONAR_HOST_URL 
         -Dsonar.login=$SONAR_TOKEN
   only:
