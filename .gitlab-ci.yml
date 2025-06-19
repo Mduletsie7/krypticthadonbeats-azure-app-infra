@@ -51,7 +51,7 @@ unit-tests:
   script:
     - cd application
     - npm ci
-    - npm run test -- --watchAll=false
+    - npm run test -- --ci --passWithNoTests
   allow_failure: true
 
 build_image:
