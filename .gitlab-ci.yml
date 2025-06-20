@@ -120,8 +120,6 @@ container_scanning:
 deploy:
   stage: deploy
   image: mcr.microsoft.com/azure-cli:latest
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
   script:
     # Azure sp login
     - echo "Using service principal to log in to Azure"
@@ -132,4 +130,4 @@ deploy:
     - az containerapp update --name "$AZURE_CONTAINER_APP_NAME" --resource-group "$AZURE_RESOURCE_GROUP" --image "$DOCKER_IMAGE"
   after_script:
     - az logout
-  # when: manual
+  when: manual
