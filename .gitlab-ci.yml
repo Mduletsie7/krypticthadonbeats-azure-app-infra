@@ -118,14 +118,16 @@ deploy:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   script:
-    - az login --service-principal \
-        --username "$AZURE_CLIENT_ID" \
-        --password "$AZURE_CLIENT_SECRET" \
+  # Azure sp login
+    - az login --service-principal 
+        --username "$AZURE_CLIENT_ID" 
+        --password "$AZURE_CLIENT_SECRET" 
         --tenant "$AZURE_TENANT_ID"
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
-    - az containerapp update \
-        --name "$AZURE_CONTAINER_APP_NAME" \
-        --resource-group "$AZURE_RESOURCE_GROUP" \
+    # Container app update
+    - az containerapp update 
+        --name "$AZURE_CONTAINER_APP_NAME" 
+        --resource-group "$AZURE_RESOURCE_GROUP" 
         --image "$DOCKER_IMAGE"
   after_script:
     - az logout
