@@ -51,6 +51,10 @@ unit-tests:
     - cd application
     - npm ci
     - npm test -- --coverage
+  artifacts:
+    paths:
+      - application/coverage/lcov.info
+    when: always
   allow_failure: true
 
 build_image:
