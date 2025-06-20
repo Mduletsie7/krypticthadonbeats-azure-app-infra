@@ -117,9 +117,6 @@ deploy:
   image: mcr.microsoft.com/azure-cli:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
-  before_script:
-    - az login --username "$AZURE_USERNAME" --password "$AZURE_PASSWORD" --tenant "$AZURE_TENANT_ID"
-    - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
   script:
     - az login --service-principal \
         --username "$AZURE_CLIENT_ID" \
