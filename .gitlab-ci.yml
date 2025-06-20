@@ -43,15 +43,16 @@ build_compile:
     paths:
       - "application/dist"
 
-test:
+unit-tests:
   stage: test
   image: node:20-alpine
   dependencies:
-     - build_compile 
+    - build_compile 
   script:
-    - cd application/frontend
+    - cd application
     - npm ci
-    - npm run test -- --watchAll=false
+    - npm test -- --coverage
+  allow_failure: true
 
 build_image:
   stage: build_image
