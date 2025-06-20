@@ -75,6 +75,7 @@ build_image:
 sonarqube-check:
   image: sonarsource/sonar-scanner-cli:latest
   stage: sonar_scan
+  cache: {}
   script:
     - sonar-scanner 
         -Dsonar.projectKey=krypticthadonbeats 
@@ -118,10 +119,12 @@ deploy:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   script:
-  # Azure sp login
+    # Azure sp login
+    - echo "Using service principal to log in to Azure"
     - az login --service-principal --username "$AZURE_CLIENT_ID" --password "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
     # Container app update
+    - echo "Updating container app with latest version... 3... 2... 1..."
     - az containerapp update --name "$AZURE_CONTAINER_APP_NAME" --resource-group "$AZURE_RESOURCE_GROUP" --image "$DOCKER_IMAGE"
   after_script:
     - az logout
