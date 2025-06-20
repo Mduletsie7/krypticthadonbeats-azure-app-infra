@@ -121,7 +121,7 @@ deploy:
   script:
     # Azure sp login
     - echo "Using service principal to log in to Azure"
-    - az login --allow-no-subscriptions --service-principal --username "$AZURE_CLIENT_ID" --password "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
+    - az login --service-principal --username "$AZURE_USERNAME" --password "$AZURE_PASSWORD" --tenant "$AZURE_TENANT_ID"
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
     # Container app update
     - echo "Updating container app with latest version... 3... 2... 1..."
