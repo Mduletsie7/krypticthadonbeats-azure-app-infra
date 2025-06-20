@@ -30,7 +30,6 @@ cache:
 .azure-login: &azure_login
   - echo "$AZURE_PASSWORD" | docker login $AZURE_REGISTRY -u "$AZURE_USERNAME" --password-stdin
 
-
 build_compile:
   stage: build_compile
   image: node:20-alpine
@@ -115,8 +114,17 @@ container_scanning:
 
 deploy:
   stage: deploy
-  image: alpine:latest
+  image: mcr.microsoft.com/azure-cli:latest
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
+  before_script:
+    - echo "$AZURE_PASSWORD" | az login --username "$AZURE_USERNAME" --password --tenant "$AZURE_TENANT_ID"
+    - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
   script:
-    - echo "Getting ready for lift off... 3... 2... 1... Deployed!"
+    - az containerapp update \
+        --name "$AZURE_CONTAINER_APP_NAME" \
+        --resource-group "$AZURE_RESOURCE_GROUP" \
+        --image "$DOCKER_IMAGE"
+  after_script:
+    - az logout
+  when: manual

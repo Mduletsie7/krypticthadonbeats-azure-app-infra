@@ -2,5 +2,5 @@ projectKey=krypticthadonbeats
 serverUrl=http://20.63.6.218:9000
 serverVersion=25.6.0.109173
 dashboardUrl=http://20.63.6.218:9000/dashboard?id=krypticthadonbeats
-ceTaskId=636c18ae-1fb3-43bd-94cd-c74499412a1f
-ceTaskUrl=http://20.63.6.218:9000/api/ce/task?id=636c18ae-1fb3-43bd-94cd-c74499412a1f
+ceTaskId=fc3a9ba6-2d42-4459-93a9-1e22f25a655a
+ceTaskUrl=http://20.63.6.218:9000/api/ce/task?id=fc3a9ba6-2d42-4459-93a9-1e22f25a655a
