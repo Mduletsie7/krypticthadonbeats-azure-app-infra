@@ -118,7 +118,7 @@ deploy:
   rules:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
-    - echo "$AZURE_PASSWORD" | az login --username "$AZURE_USERNAME" --password --tenant "$AZURE_TENANT_ID"
+    - az login --username "$AZURE_USERNAME" --password "$AZURE_PASSWORD" --tenant "$AZURE_TENANT_ID"
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
   script:
     - az containerapp update \
