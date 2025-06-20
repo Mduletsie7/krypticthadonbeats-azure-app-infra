@@ -50,12 +50,19 @@ unit-tests:
   script:
     - cd application
     - npm ci
-    - npm test -- --coverage
+    - npm test -- --coverage --coverageReporters=text-lcov,cobertura --reporters=default --reporters=jest-junit --watchAll=false --ci
   artifacts:
+    reports:
+      junit: application/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: application/coverage/cobertura-coverage.xml
     paths:
-      - application/coverage/lcov.info
+      - application/coverage/
+      - application/junit.xml
+    expire_in: 30 days
     when: always
-  allow_failure: true
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
 
 build_image:
   stage: build_image
