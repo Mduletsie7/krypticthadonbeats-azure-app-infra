@@ -81,7 +81,6 @@ sonarqube-check:
         -Dsonar.sources=. 
         -Dsonar.host.url=$SONAR_HOST_URL 
         -Dsonar.login=$SONAR_TOKEN
-  dependencies: test:unit-tests
   only:
     - merge_requests
     - develop
