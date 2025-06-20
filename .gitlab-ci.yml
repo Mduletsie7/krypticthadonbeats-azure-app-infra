@@ -81,6 +81,7 @@ sonarqube-check:
         -Dsonar.sources=. 
         -Dsonar.host.url=$SONAR_HOST_URL 
         -Dsonar.login=$SONAR_TOKEN
+  dependencies: test:unit-tests
   only:
     - merge_requests
     - develop
@@ -119,16 +120,10 @@ deploy:
     - if: '$CI_COMMIT_BRANCH == "develop"'
   script:
   # Azure sp login
-    - az login --service-principal 
-        --username "$AZURE_CLIENT_ID" 
-        --password "$AZURE_CLIENT_SECRET" 
-        --tenant "$AZURE_TENANT_ID"
+    - az login --service-principal --username "$AZURE_CLIENT_ID" --password "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
     # Container app update
-    - az containerapp update 
-        --name "$AZURE_CONTAINER_APP_NAME" 
-        --resource-group "$AZURE_RESOURCE_GROUP" 
-        --image "$DOCKER_IMAGE"
+    - az containerapp update --name "$AZURE_CONTAINER_APP_NAME" --resource-group "$AZURE_RESOURCE_GROUP" --image "$DOCKER_IMAGE"
   after_script:
     - az logout
   # when: manual
