@@ -18,11 +18,10 @@ output "container_app_id" {
 
 output "container_app_environment_id" {
   description = "The resource ID for the container app environment"
-  value = azurerm_container_app_environment.aca_environment.id
+  value       = azurerm_container_app_environment.aca_environment.id
 }
 
 output "log_analytics_workspace_id" {
   description = "ID of the Log Analytics Workspace"
   value       = azurerm_log_analytics_workspace.log_analytics_ws.id
 }
-

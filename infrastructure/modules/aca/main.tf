@@ -16,10 +16,11 @@ resource "azurerm_container_app_environment" "aca_environment" {
 
 resource "azurerm_container_app" "aca" {
   name                         = var.container_app_name
-  location                     = var.location
   resource_group_name          = var.resource_group_name
   container_app_environment_id = azurerm_container_app_environment.aca_environment.id
   revision_mode                = "Single"
+
+  tags = var.common_tags
 
   identity {
     type = "SystemAssigned"
@@ -33,9 +34,9 @@ resource "azurerm_container_app" "aca" {
       memory = "0.5Gi"
     }
 
-      min_replicas = 1
-      max_replicas = 1
-    
+    min_replicas = 1
+    max_replicas = 1
+
   }
 
   ingress {
@@ -52,5 +53,9 @@ resource "azurerm_container_app" "aca" {
   registry {
     server   = "krypticthadonbeatsapp.azurecr.io"
     identity = "SystemAssigned"
+  }
+
+  lifecycle {
+    ignore_changes = all
   }
 }
