@@ -66,7 +66,7 @@ variable "storage_container_name" {
 variable "container_access_type" {
   description = "Storage account access type"
   type        = string
-  default     = "private"
+  default     = "blob"
 }
 
 variable "common_tags" {
