@@ -7,3 +7,16 @@ variable "image_tag" {
   default = "latest"
 }
 
+variable "common_tags" {
+  description = "Common tags to apply across all resources."
+  type        = map(string)
+  default = {
+    environment = "dev"
+    project     = "Kryptic Tha Don Beats"
+    owner       = "mdumisidev@gmail.com"
+    department  = "engineering"
+    managedBy   = "Terraform"
+    createdBy   = "Terraform"
+  }
+}
+
