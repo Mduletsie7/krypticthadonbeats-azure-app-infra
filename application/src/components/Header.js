@@ -17,6 +17,20 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
+
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
@@ -25,10 +39,22 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
+  // Close menu on escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        closeMobileMenu();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMobileMenuOpen]);
+
   const navigationItems = [
     { to: "LeaseBeats-section", label: "Lease Beats" },
-    { to: "notable-credits", label: "Credits" },
-    { to: "rw-contact-form", label: "Contact" }
+    { to: "production-credits", label: "Credits" },
+    { to: "contact-container", label: "Contact" }
   ];
 
   return (
@@ -66,21 +92,24 @@ const Header = () => {
         </nav>
 
         {/* Mobile Menu Button */}
-        <button
-          className={`header__mobile-toggle ${isMobileMenuOpen ? 'header__mobile-toggle--open' : ''}`}
+        <button 
+          className={`header__menu-button ${isMobileMenuOpen ? 'header__menu-button--open' : ''}`}
           onClick={toggleMobileMenu}
-          aria-label="Toggle navigation menu"
+          aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-navigation"
         >
-          <span className="header__mobile-toggle-line"></span>
-          <span className="header__mobile-toggle-line"></span>
-          <span className="header__mobile-toggle-line"></span>
+          <span className="header__menu-button-line"></span>
+          <span className="header__menu-button-line"></span>
+          <span className="header__menu-button-line"></span>
         </button>
 
         {/* Mobile Navigation */}
         <nav 
+          id="mobile-navigation"
           className={`header__mobile-nav ${isMobileMenuOpen ? 'header__mobile-nav--open' : ''}`}
           aria-label="Mobile navigation"
+          aria-hidden={!isMobileMenuOpen}
         >
           <ul className="header__mobile-nav-list">
             {navigationItems.map((item) => (
@@ -92,6 +121,7 @@ const Header = () => {
                   offset={-80}
                   className="header__mobile-nav-link"
                   onClick={closeMobileMenu}
+                  tabIndex={isMobileMenuOpen ? 0 : -1}
                 >
                   {item.label}
                 </Link>
@@ -99,15 +129,6 @@ const Header = () => {
             ))}
           </ul>
         </nav>
-
-        {/* Mobile Menu Overlay */}
-        {isMobileMenuOpen && (
-          <div 
-            className="header__mobile-overlay"
-            onClick={closeMobileMenu}
-            aria-hidden="true"
-          />
-        )}
       </div>
     </header>
   );

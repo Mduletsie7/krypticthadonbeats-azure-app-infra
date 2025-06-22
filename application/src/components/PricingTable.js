@@ -12,9 +12,8 @@ const usePricingData = () => {
         name: "Standard",
         description: "Untagged High Quality MP3 File",
         price: 30,
-        originalPrice: null,
         features: [
-          { text: "5,000 sales", highlight: false },
+          { text: "10,000 sales", highlight: false },
           { text: "100,000 Audio Streams", highlight: false },
           { text: "Upload to SoundCloud, Spotify, Apple Music, etc", highlight: false },
           { text: "Use it for albums, performances, music videos and radio", highlight: false },
@@ -27,10 +26,9 @@ const usePricingData = () => {
         name: "Premium",
         description: "Untagged MP3 + WAV File",
         price: 50,
-        originalPrice: 60,
         features: [
-          { text: "10,000 sales", highlight: true },
-          { text: "200,000 streams", highlight: true },
+          { text: "50,000 sales", highlight: false },
+          { text: "500,000 streams", highlight: false },
           { text: "Upload to SoundCloud, Spotify, Apple Music, etc", highlight: false },
           { text: "Use it for albums, performances, music videos and radio", highlight: false },
           { text: "Kryptic Tha Don maintains full ownership of the instrumental", highlight: false }
@@ -42,7 +40,6 @@ const usePricingData = () => {
         name: "Unlimited",
         description: "MP3 + WAV + Trackouts",
         price: 100,
-        originalPrice: null,
         features: [
           { text: "Unlimited sales & Unlimited streams", highlight: true },
           { text: "Includes Trackout stem files", highlight: true },
@@ -63,15 +60,21 @@ const usePricingData = () => {
 };
 
 // Memoized feature list component
-const FeatureList = memo(({ features }) => (
+const FeatureList = memo(({ features, isPopular }) => (
   <ul className="list-none p-0 m-0 flex-grow-1">
     {features.map((feature, index) => (
       <li key={index} className="flex align-items-start mb-3">
         <i 
-          className="pi pi-check-circle text-blue-600 mr-3 mt-1 flex-shrink-0" 
+          className={`pi pi-check-circle mr-3 mt-1 flex-shrink-0 ${
+            isPopular ? 'text-black' : 'text-black-600'
+          }`}
           aria-hidden="true"
         />
-        <span className={`text-800 text-sm leading-relaxed ${feature.highlight ? 'font-semibold' : 'font-medium'}`}>
+        <span className={`text-sm leading-relaxed ${
+          isPopular 
+            ? `text-black ${feature.highlight ? 'font-bold' : 'font-medium'}`
+            : `text-800 ${feature.highlight ? 'font-semibold' : 'font-medium'}`
+        }`}>
           {feature.text}
         </span>
       </li>
@@ -81,13 +84,10 @@ const FeatureList = memo(({ features }) => (
 
 FeatureList.displayName = 'FeatureList';
 
-// Memoized price display component
-const PriceDisplay = memo(({ price, originalPrice }) => (
+// Simplified price display component
+const PriceDisplay = memo(({ price }) => (
   <div className="flex align-items-center gap-3 mb-4">
     <span className="font-bold text-3xl text-900">${price}</span>
-    {originalPrice && (
-      <span className="text-500 line-through text-xl">${originalPrice}</span>
-    )}
   </div>
 ));
 
@@ -96,12 +96,19 @@ PriceDisplay.displayName = 'PriceDisplay';
 // Memoized pricing card component with enhanced features
 const PricingCard = memo(({ plan, onPlanSelect, isSelected }) => {
   const cardClasses = useMemo(() => {
-    const baseClasses = "shadow-2 p-3 h-full flex flex-column surface-card transition-all duration-300";
-    const popularClasses = plan.popular ? "border-2 transform scale-105" : "";
+    const baseClasses = "shadow-2 p-3 h-full flex flex-column transition-all duration-300";
+    const popularClasses = plan.popular ? "border-2 transform scale-105" : "surface-card";
     const selectedClasses = isSelected ? "ring-2 ring-blue-400" : "";
     
     return `${baseClasses} ${popularClasses} ${selectedClasses}`.trim();
   }, [plan.popular, isSelected]);
+
+  const textColorClasses = useMemo(() => ({
+    title: plan.popular ? "text-black" : "text-900",
+    description: plan.popular ? "text-black text-opacity-90" : "text-700",
+    price: plan.popular ? "text-black" : "text-900",
+    hrBorder: plan.popular ? "border-white border-opacity-20" : "surface-border"
+  }), [plan.popular]);
 
   const handleCardClick = useCallback(() => {
     onPlanSelect?.(plan.id);
@@ -122,6 +129,7 @@ const PricingCard = memo(({ plan, onPlanSelect, isSelected }) => {
           style={{ 
             borderRadius: "6px", 
             cursor: "pointer",
+            backgroundColor: plan.popular ? "burlywood" : undefined,
             borderColor: plan.popular ? "burlywood" : undefined
           }}
           onClick={handleCardClick}
@@ -136,24 +144,26 @@ const PricingCard = memo(({ plan, onPlanSelect, isSelected }) => {
               style={{ 
                 borderRadius: "4px", 
                 marginTop: "-8px",
-                backgroundColor: "burlywood"
+                backgroundColor: "black"
               }}
               role="banner"
             >
-              ⭐ Most Popular
+               Most Popular
             </div>
           )}
           
           <header>
-            <h3 className="text-900 font-bold text-xl mb-3">{plan.name}</h3>
-            <p className="text-700 text-sm mb-4">{plan.description}</p>
+            <h3 className={`${textColorClasses.title} font-bold text-xl mb-3`}>{plan.name}</h3>
+            <p className={`${textColorClasses.description} text-sm mb-4`}>{plan.description}</p>
           </header>
           
-          <PriceDisplay price={plan.price} originalPrice={plan.originalPrice} />
+          <div className="flex align-items-center gap-3 mb-4">
+            <span className={`font-bold text-3xl ${textColorClasses.price}`}>${plan.price}</span>
+          </div>
           
-          <hr className="my-4 mx-0 border-top-1 border-none surface-border" />
+          <hr className={`my-4 mx-0 border-top-1 border-none ${textColorClasses.hrBorder}`} />
           
-          <FeatureList features={plan.features} />
+          <FeatureList features={plan.features} isPopular={plan.popular} />
         </div>
       </div>
     </div>

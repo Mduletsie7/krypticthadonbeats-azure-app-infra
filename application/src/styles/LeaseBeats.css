@@ -6,7 +6,7 @@
   --leasebeats-text: #333;
   --leasebeats-heading-color: #1a1a1a;
   --leasebeats-meta-color: #666;
-  --leasebeats-border-radius: 12px;
+  --leasebeats-border-radius: 1px;
   --leasebeats-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   --leasebeats-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -60,10 +60,10 @@
 }
 
 .hero-brand {
-  color: transparent;
-  font-weight: 800;
+  color: black;
+  font-weight: 700;
   position: relative;
-  -webkit-text-stroke: 1px #000;
+  /* -webkit-text-stroke: 1px #000; */
 }
 
 /* Optional: Add subtle animation to brand name */
