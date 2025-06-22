@@ -1,7 +1,7 @@
 /* Hero Section Styles */
 .hero {
   /* Uncomment and update with your image URL when ready */
-  /* background-image: url('https://krypticmusicportfolio.s3.amazonaws.com/images/websitehero.jpg'); */
+  background-image: url('https://krypticthadonstorage.blob.core.windows.net/media/images/heroBG.jpg');
   background-color: burlywood;
   background-size: cover;
   background-repeat: no-repeat;
@@ -27,7 +27,7 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.3); /* Dark overlay */
   z-index: 1;
-  opacity: 0; /* Hidden by default, show when background image is active */
+  opacity: 1000; /* Hidden by default, show when background image is active */
   transition: opacity 0.3s ease;
 }
 
@@ -55,12 +55,12 @@
   font-weight: 700;
   line-height: 1.1;
   margin-bottom: 1.5rem;
-  color: #000;
+  color: #fff;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .hero-brand {
-  color: black;
+  color: #fff;
   font-weight: 700;
   position: relative;
   /* -webkit-text-stroke: 1px #000; */
@@ -87,7 +87,7 @@
   font-size: clamp(1.1rem, 3vw, 1.5rem);
   line-height: 1.6;
   margin-bottom: 2rem;
-  color: #333;
+  color: #fff;
   font-weight: 400;
   max-width: 600px;
   margin-left: auto;
@@ -124,6 +124,9 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .hero {
+    background-image: url('https://krypticthadonstorage.blob.core.windows.net/media/images/herobg_mobile.jpg');
+  }
   .hero-container {
     padding: 0 1rem;
   }
@@ -139,6 +142,7 @@
 
 @media (max-width: 480px) {
   .hero {
+    background-image: url('https://krypticthadonstorage.blob.core.windows.net/media/images/herobg_mobile.jpg');
     min-height: 80vh;
   }
   

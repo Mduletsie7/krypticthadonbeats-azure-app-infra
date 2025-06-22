@@ -138,4 +138,3 @@ deploy:
     - az containerapp update --name "$AZURE_CONTAINER_APP_NAME" --resource-group "$AZURE_RESOURCE_GROUP" --image "$DOCKER_IMAGE"
   after_script:
     - az logout
-  when: manual
