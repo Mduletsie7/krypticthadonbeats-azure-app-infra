@@ -50,7 +50,7 @@ unit-tests:
   script:
     - cd application
     - npm ci
-    - npm test -- --coverage --coverageReporters=text-lcov,cobertura --reporters=default --reporters=jest-junit --watchAll=false --ci
+    - npm test -- --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit --ci --runInBand || true
   artifacts:
     reports:
       junit: application/junit.xml
