@@ -6,15 +6,16 @@
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  background-attachment: fixed; /* Parallax effect */
+  /* Removed for better mobile performance */
+  background-attachment: scroll; 
   
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  /* Improved text contrast */
   position: relative;
+  z-index: 1;
+  overflow: hidden;
 }
 
 /* Optional: Add overlay for better text readability when background image is used */
@@ -25,9 +26,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3); /* Dark overlay */
+  background: rgba(0, 0, 0, 0.4); /* Dark overlay */
   z-index: 1;
-  opacity: 1000; /* Hidden by default, show when background image is active */
+  opacity: 1; /* Hidden by default, show when background image is active */
   transition: opacity 0.3s ease;
 }
 
@@ -143,7 +144,10 @@
 @media (max-width: 480px) {
   .hero {
     background-image: url('https://krypticthadonstorage.blob.core.windows.net/media/images/herobg_mobile.jpg');
-    min-height: 80vh;
+    background-size: cover; /* Less zoomed-in */
+    background-position: top center;
+    background-repeat: no-repeat;
+    background-attachment: scroll; /* Override fixed */
   }
   
   .hero-text h1 {
