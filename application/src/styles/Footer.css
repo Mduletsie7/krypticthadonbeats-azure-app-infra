@@ -1,44 +1,30 @@
 /* Footer.css */
 .footer {
-    background-color: #fff;
-    color: black;
-    padding: 20px 0;
-  }
-  
-  .footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .footer-logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .footer-links ul {
-    list-style-type: none;
-    display: flex;
-  }
-  
-  .footer-links ul li {
-    margin-right: 20px;
-    cursor: pointer;
-  }
-  
-  .footer-bottom {
-    margin-top: 20px;
-    text-align: center;
-  }
+  background-color: #111;
+  color: #eee;
+  padding: 1.5rem 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-  /* Media queries for smaller screens */
-@media (max-width: 768px) {
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-text {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
   .footer {
-    padding: 10px;
+    padding: 1rem;
   }
 
-  .footer-bottom {
-    margin-top: 10px;
+  .footer-text {
+    font-size: 0.85rem;
   }
 }
-  
