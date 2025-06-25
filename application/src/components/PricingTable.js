@@ -107,7 +107,7 @@ const PricingCard = memo(({ plan, onPlanSelect, isSelected }) => {
     title: plan.popular ? "text-black" : "text-900",
     description: plan.popular ? "text-black text-opacity-90" : "text-700",
     price: plan.popular ? "text-black" : "text-900",
-    hrBorder: plan.popular ? "border-white border-opacity-20" : "surface-border"
+    hrBorder: plan.popular ? "border-none border-opacity-20" : "surface-border"
   }), [plan.popular]);
 
   const handleCardClick = useCallback(() => {

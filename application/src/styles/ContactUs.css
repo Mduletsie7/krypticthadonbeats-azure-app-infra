@@ -37,10 +37,10 @@
 }
 
 .email-container {
-  background: burlywood;
+  background: #fdfbf8;
   padding: 1.5rem;
-  border-radius: 15px;
-  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 1px;
+  border: 1px solid #000;
   transition: all 0.3s ease;
 }
 
@@ -70,7 +70,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .contact-container {
-    padding: 1rem;
+    padding: 0.5rem;
   }
   
   .contact-content {
