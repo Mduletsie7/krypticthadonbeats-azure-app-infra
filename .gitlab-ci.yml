@@ -72,8 +72,6 @@ build_image:
   image: docker:latest
   services:
     - docker:dind
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
     - *azure_login
   script:
@@ -99,6 +97,8 @@ sonarqube-check:
   only:
     - merge_requests
     - develop
+    - feature
+    - main
 
 container_scanning:
   stage: container_scanning
@@ -106,8 +106,6 @@ container_scanning:
   services:
     - docker:dind
   needs: ["build_image"]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
   before_script:
     - apk add --no-cache curl
     - *azure_login
