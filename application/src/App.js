@@ -5,6 +5,7 @@ import Hero from './components/Hero';
 import LeaseBeats from './components/LeaseBeats';
 import { PricingTable } from './components/PricingTable';
 import ProductionCredits from './components/ProductionCredits';
+import ContactUs from './components/ContactUs';
 import Footer from './components/Footer';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <PricingTable />
       <h1>Production Credits</h1>
       <ProductionCredits />
+      <ContactUs />
       <Footer />
     </div>
   );

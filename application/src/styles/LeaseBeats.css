@@ -1,21 +1,183 @@
+/* LeaseBeats Component Styles - Optimized Version */
+
+/* CSS Custom Properties */
+:root {
+  --leasebeats-bg: #f8f9fa;
+  --leasebeats-text: #333;
+  --leasebeats-heading-color: #1a1a1a;
+  --leasebeats-meta-color: #666;
+  --leasebeats-border-radius: 1px;
+  --leasebeats-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --leasebeats-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Main section with better performance */
+.LeaseBeats-section {
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  
+  /* Performance optimization */
+  contain: layout;
+}
+
+/* Header section for better semantics */
+.LeaseBeats-section header {
+  text-align: center;
+  max-width: 800px;
+}
+
+/* Optimized heading styles */
 .LeaseBeats-heading {
-    background: #fdfbf8;
-    color: black;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  
+  /* Typography optimization */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* Meta text styling */
 .beats-meta {
-    font-size: 25px;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: var(--leasebeats-meta-color);
+  font-weight: 400;
+  margin-bottom: 0;
+  line-height: 1.4;
 }
 
-/* Media query for screens smaller than 600px (adjust as needed) */
-@media (max-width: 600px) {
-    iframe {
-        width:90%;
-        height: 600px;
-      }
-      .beats-meta {
-        font-size: 15px;
-        padding-bottom: 5px;
-    }
-  }
+/* Optimized player container */
+.beatstars-player-container {
+  width: 100%;
+  max-width: 1024px;
+  border-radius: var(--leasebeats-border-radius);
+  overflow: hidden;
+  box-shadow: var(--leasebeats-shadow);
+  transition: var(--leasebeats-transition);
+  
+  /* Performance optimizations */
+  will-change: transform, box-shadow;
+  transform: translate3d(0, 0, 0);
+}
 
+/* Hover effect for better UX */
+.beatstars-player-container:hover {
+  transform: translate3d(0, -4px, 0);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Iframe optimization */
+.beatstars-player-container iframe {
+  display: block;
+  width: 100%;
+  height: 800px;
+  border: none;
+  border-radius: var(--leasebeats-border-radius);
+  
+  /* Performance optimization */
+  will-change: auto;
+}
+
+/* Loading state styles */
+.beatstars-player-container::before {
+  content: "Loading beats player...";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--leasebeats-meta-color);
+  font-size: 1.1rem;
+  z-index: -1;
+  opacity: 0.7;
+}
+
+/* Responsive Design - Mobile First */
+@media (max-width: 480px) {
+  .LeaseBeats-section {
+    padding: 2rem 1rem;
+    gap: 1.5rem;
+  }
+  
+  .beatstars-player-container iframe {
+    height: 600px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .LeaseBeats-section {
+    padding: 3rem 1.5rem;
+  }
+  
+  .beatstars-player-container iframe {
+    height: 700px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .LeaseBeats-section {
+    padding: 5rem 2rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .beatstars-player-container,
+  .beatstars-player-container:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --leasebeats-bg: #fff;
+    --leasebeats-text: #000;
+    --leasebeats-heading-color: #000;
+    --leasebeats-meta-color: #333;
+    --leasebeats-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .beatstars-player-container {
+    border: 2px solid #000;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --leasebeats-bg: #1a1a1a;
+    --leasebeats-text: #e0e0e0;
+    --leasebeats-heading-color: #fff;
+    --leasebeats-meta-color: #ccc;
+    --leasebeats-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Print styles */
+@media print {
+  .LeaseBeats-section {
+    background: none;
+    box-shadow: none;
+  }
+  
+  .beatstars-player-container {
+    display: none;
+  }
+  
+  .beatstars-player-container::after {
+    content: "Interactive content not available in print";
+    display: block;
+    text-align: center;
+    padding: 2rem;
+    border: 1px solid #ccc;
+  }
+}
