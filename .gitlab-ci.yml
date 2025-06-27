@@ -19,7 +19,7 @@ variables:
   IMAGE_TAG: $CI_COMMIT_SHA
   DOCKER_IMAGE: $REGISTRY_URI/$REGISTRY_NAME:$IMAGE_TAG
   SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" 
-  GIT_DEPTH: "0"  # Ensure full history for analysis
+  GIT_DEPTH: "0" 
   SAST_EXCLUDED_PATHS: "infrastructure/**"
   SAST_INCLUDED_PATHS: "application/"
 
@@ -28,7 +28,6 @@ cache:
   paths:
     - .sonar/cache
 
-# Anchors
 .azure-acr-login: &azure_acr_login
   - echo "$AZURE_PASSWORD" | docker login $AZURE_REGISTRY -u "$AZURE_USERNAME" --password-stdin
 

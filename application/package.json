@@ -26,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --coverage --silent --forceExit",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint ."
   },
   "eslintConfig": {
     "extends": [
@@ -54,6 +55,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "babel-jest": "^30.0.2",
+    "eslint": "^8.57.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
     "jest-junit": "^16.0.0"

@@ -9,14 +9,15 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build && npm install -g serve
+RUN npm run build
 
 # Stage 2
 FROM node:20-alpine
 
 WORKDIR /app
 
-COPY --from=builder /usr/local/bin/serve /usr/local/bin/serve
+RUN npm install -g serve
+
 COPY --from=builder /app/build ./build
 
 RUN npm cache clean --force
