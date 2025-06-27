@@ -1,4 +1,3 @@
-// PricingTable.test.js
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { PricingTable } from "../components/PricingTable"; 

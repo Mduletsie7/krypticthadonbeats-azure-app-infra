@@ -1,9 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Header from '../components/Header';
-import { act } from 'react-dom/test-utils';
 
-// Mock react-scroll
 jest.mock('react-scroll', () => ({
   Link: ({ children, to }) => <a href={`#${to}`}>{children}</a>
 }));

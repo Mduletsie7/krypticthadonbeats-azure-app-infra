@@ -95,7 +95,6 @@ sonarqube-check:
         -Dsonar.host.url=$SONAR_HOST_URL 
         -Dsonar.login=$SONAR_TOKEN
   only:
-    - merge_requests
     - develop
     - feature
     - main

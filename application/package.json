@@ -11,6 +11,7 @@
     "aws-sdk": "^2.1573.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "hot-shots": "^11.1.0",
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
     "primereact": "^10.7.0",
