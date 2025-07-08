@@ -66,6 +66,14 @@ unit-tests:
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   allow_failure: true
 
+cypress_tests:
+  image: node:latest
+  stage: test
+  script:
+    - npm ci
+    - npm start &
+    - npm run e2e
+
 build_image:
   stage: build_image
   image: docker:latest
