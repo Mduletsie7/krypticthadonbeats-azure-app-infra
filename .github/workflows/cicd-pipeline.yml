@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies and build
         working-directory: application
         run: |
-          npm i
+          npm i --force
           unset CI
           npm run build
       - name: Upload build artifacts
@@ -55,8 +55,7 @@ jobs:
         working-directory: application
         continue-on-error: true
         run: |
-          cd application
-          npm ci
+          npm i --force
           npm test -- --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit --ci --runInBand
       - name: Upload test reports
         uses: actions/upload-artifact@v4
@@ -74,9 +73,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies and run Cypress tests
+        working-directory: application
         run: |
-          cd application
-          npm ci
+          npm i --force
           npm start &
           npx wait-on http://localhost:3000
           npm run e2e
