@@ -1,0 +1,179 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/**
+
+env:
+  REGISTRY_URI: ${{ secrets.AZURE_REGISTRY }}
+  REGISTRY_NAME: ${{ secrets.AZURE_REGISTRY_NAME }}
+  IMAGE_TAG: ${{ github.sha }}
+  DOCKER_IMAGE: ${{ secrets.AZURE_REGISTRY }}/{{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }}
+  SONAR_USER_HOME: ${{ github.workspace }}/.sonar
+  GIT_DEPTH: 0
+  SAST_EXCLUDED_PATHS: "infrastructure/**"
+  SAST_INCLUDED_PATHS: "application/"
+
+jobs:
+  build_compile:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies and build
+        working-directory: application
+        run: |
+          npm ci
+          unset CI
+          npm run build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: application/dist
+
+  unit-tests:
+    needs: build_compile
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+      - name: Run tests
+        working-directory: application
+        continue-on-error: true
+        run: |
+          npm ci
+          npm test -- --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit --ci --runInBand
+      - name: Upload test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: |
+            application/junit.xml
+            application/coverage/cobertura-coverage.xml
+            application/coverage/
+      - name: Parse coverage (optional, custom step needed)
+        run: echo "Coverage parsing would go here"
+
+  cypress_tests:
+    runs-on: ubuntu-latest
+    container:
+      image: node:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies and run Cypress tests
+        run: |
+          npm ci
+          npm start &
+          npx wait-on http://localhost:3000
+          npm run e2e
+
+  build_image:
+    needs: [build_compile]
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:20-dind
+        privileged: true
+        options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to Azure Container Registry
+        env:
+          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_REGISTRY: ${{ secrets.AZURE_REGISTRY }}
+        run: echo "${AZURE_PASSWORD}" | docker login $AZURE_REGISTRY -u "$AZURE_USERNAME" --password-stdin
+      - name: Build and push Docker image
+        working-directory: application
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY_NAME: ${{ secrets.AZURE_REGISTRY_NAME }}
+          DOCKER_IMAGE: ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY_NAME:$IMAGE_TAG .
+          docker tag $REGISTRY_NAME:$IMAGE_TAG $DOCKER_IMAGE
+          docker push $DOCKER_IMAGE
+      - name: Logout Docker
+        env:
+          REGISTRY_URI: ${{ secrets.AZURE_REGISTRY }}
+        run: docker logout $REGISTRY_URI
+
+  sonarqube-check:
+    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container:
+      image: sonarsource/sonar-scanner-cli:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
+
+  container_scanning:
+    needs: build_image
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:20-dind
+        privileged: true
+        options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies and Docker Scout
+        run: |
+          apk add --no-cache curl || sudo apt-get install -y curl || true
+          curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+          sh install-scout.sh
+      - name: Login Docker Scout and ACR
+        env:
+          DOCKER_SCOUT_TOKEN: ${{ secrets.DOCKER_SCOUT_TOKEN }}
+          DOCKER_SCOUT_HUB_USERNAME: ${{ secrets.DOCKER_SCOUT_HUB_USERNAME }}
+          AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+          AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
+          REGISTRY_URI: ${{ secrets.AZURE_REGISTRY }}
+        run: |
+          echo "$DOCKER_SCOUT_TOKEN" | docker login -u "$DOCKER_SCOUT_HUB_USERNAME" --password-stdin
+          echo "$AZURE_PASSWORD" | docker login $REGISTRY_URI -u "$AZURE_USERNAME" --password-stdin
+      - name: Run CVE scan and Quickview
+        env:
+          DOCKER_IMAGE: ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }}
+        run: |
+          docker scout cves $DOCKER_IMAGE > cves-report.txt
+          docker scout quickview $DOCKER_IMAGE
+      - name: Upload CVE report
+        uses: actions/upload-artifact@v3
+        with:
+          name: cves-report
+          path: cves-report.txt
+      - name: Logout Docker
+        env:
+          REGISTRY_URI: ${{ secrets.AZURE_REGISTRY }}
+        run: docker logout $REGISTRY_URI
+
+  deploy:
+    needs: build_image
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.m
