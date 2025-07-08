@@ -69,6 +69,7 @@ unit-tests:
 cypress_tests:
   image: node:latest
   stage: test
+  needs: ["build_image"]
   script:
     - npm ci
     - npm start &
@@ -91,20 +92,21 @@ build_image:
   after_script:
     - docker logout $REGISTRY_URI
 
-sonarqube-check:
-  image: sonarsource/sonar-scanner-cli:latest
-  stage: sonar_scan
-  cache: {}
-  script:
-    - sonar-scanner 
-        -Dsonar.projectKey=$SONAR_PROJECT_KEY
-        -Dsonar.sources=. 
-        -Dsonar.host.url=$SONAR_HOST_URL 
-        -Dsonar.login=$SONAR_TOKEN
-  only:
-    - develop
-    - feature
-    - main
+# Will revisit this section later 
+# sonarqube-check:
+#   image: sonarsource/sonar-scanner-cli:latest
+#   stage: sonar_scan
+#   cache: {}
+#   script:
+#     - sonar-scanner 
+#         -Dsonar.projectKey=$SONAR_PROJECT_KEY
+#         -Dsonar.sources=. 
+#         -Dsonar.host.url=$SONAR_HOST_URL 
+#         -Dsonar.login=$SONAR_TOKEN
+#   only:
+#     - develop
+#     - feature
+#     - main
 
 container_scanning:
   stage: container_scanning

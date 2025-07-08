@@ -27,7 +27,8 @@
     "build": "react-scripts build",
     "test": "jest --coverage --silent --forceExit",
     "eject": "react-scripts eject",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open",
+    "e2e": "cypress run"
   },
   "eslintConfig": {
     "extends": [
