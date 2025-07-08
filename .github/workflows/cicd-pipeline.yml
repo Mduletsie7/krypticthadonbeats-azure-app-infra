@@ -29,8 +29,7 @@ jobs:
       - name: Install dependencies and build
         working-directory: application
         run: |
-          cd application
-          npm ci
+          npm i
           unset CI
           npm run build
       - name: Upload build artifacts
