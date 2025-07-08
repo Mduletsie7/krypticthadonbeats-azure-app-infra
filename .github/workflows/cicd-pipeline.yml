@@ -33,7 +33,7 @@ jobs:
           unset CI
           npm run build
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: application/dist
@@ -48,7 +48,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: dist
       - name: Run tests
@@ -58,7 +58,7 @@ jobs:
           npm ci
           npm test -- --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit --ci --runInBand
       - name: Upload test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: |
@@ -158,7 +158,7 @@ jobs:
           docker scout quickview ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }}
 
       - name: Upload CVE report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cves-report
           path: cves-report.txt
