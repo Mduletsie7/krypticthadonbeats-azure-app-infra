@@ -128,47 +128,13 @@ jobs:
   #           -Dsonar.host.url=$SONAR_HOST_URL \
   #           -Dsonar.login=$SONAR_TOKEN
 
-  # container_scanning:
-  #   needs: build_image
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: Install curl (if needed)
-  #       run: |
-  #         if ! command -v curl &> /dev/null; then
-  #           sudo apt-get update && sudo apt-get install -y curl
-  #         fi
-
-  #     - name: Install Docker Scout
-  #       run: |
-  #         curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-  #         sh install-scout.sh
-
-  #     - name: Login Docker Scout and ACR
-  #       env:
-  #         DOCKER_SCOUT_TOKEN: ${{ secrets.DOCKER_SCOUT_TOKEN }}
-  #         DOCKER_SCOUT_HUB_USERNAME: ${{ secrets.DOCKER_SCOUT_HUB_USERNAME }}
-  #         AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
-  #         AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
-  #         REGISTRY_URI: ${{ secrets.AZURE_REGISTRY }}
-  #       run: |
-  #         echo "$DOCKER_SCOUT_TOKEN" | docker login -u "$DOCKER_SCOUT_HUB_USERNAME" --password-stdin
-  #         echo "$AZURE_PASSWORD" | docker login $REGISTRY_URI -u "$AZURE_USERNAME" --password-stdin
-
-  #     - name: Run CVE scan and Quickview
-  #       run: |
-  #         docker scout cves ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }} > cves-report.txt
-  #         docker scout quickview ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }}
-
-  #     - name: Upload CVE report
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: cves-report
-  #         path: cves-report.txt
-
-  #     - name: Logout Docker
-  #       run: docker logout ${{ secrets.AZURE_REGISTRY }}
+  trivy_scan:
+    needs: build_compile
+    uses: ./.github/workflows/container_scanning.yml
+    with:
+      azure_registry: ${{ secrets.AZURE_REGISTRY }}
+      azure_registry_name: ${{ secrets.AZURE_REGISTRY_NAME }}
+      image_tag: ${{ github.sha }}
 
   # deploy:
   #   needs: build_image
