@@ -129,7 +129,7 @@ jobs:
   #           -Dsonar.login=$SONAR_TOKEN
 
   trivy_scan:
-    needs: build_compile
+    needs: build_image
     uses: ./.github/workflows/container_scanning.yml
     with:
       image_tag: ${{ github.sha }}

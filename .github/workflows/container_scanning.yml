@@ -14,8 +14,8 @@ on:
 
 jobs:
   trivy_scan:
-    name: Trivy Docker Image Scan
-    runs-on: ubuntu-20.04
+    name: Trivy Container Image Scan
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -24,7 +24,7 @@ jobs:
       - name: Set image tag environment variables
         run: |
           echo "DOCKER_IMAGE=${{ secrets.azure_registry }}/${{ secrets.azure_registry_name }}:${{ inputs.image_tag }}" >> $GITHUB_ENV
-          
+
       - name: Build Docker image
         working-directory: application
         run: |
