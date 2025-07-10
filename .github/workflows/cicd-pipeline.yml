@@ -7,6 +7,10 @@ on:
       - develop
       - feature/**
 
+permissions:
+  contents: read
+  security-events: write  
+
 env:
   REGISTRY_URI: ${{ secrets.AZURE_REGISTRY }}
   REGISTRY_NAME: ${{ secrets.AZURE_REGISTRY_NAME }}
