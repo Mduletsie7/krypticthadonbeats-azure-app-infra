@@ -56,11 +56,11 @@ jobs:
           npm install @microsoft/eslint-formatter-sarif@3.1.0
 
       - name: List JS/TS files
-        working-directory: application
+        working-directory: application/src
         run: find . -name "*.js" -o -name "*.ts" -o -name "*.tsx" -o -name "*.jsx"
 
       - name: Run ESLint
-        working-directory: application
+        working-directory: application/src
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
         run: npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
