@@ -38,33 +38,33 @@ jobs:
           name: dist
           path: application/dist
 
-  # unit-tests:
-  #   needs: build_compile
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: node:20-alpine
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Download build artifacts
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: dist
-  #     - name: Run tests
-  #       working-directory: application
-  #       continue-on-error: true
-  #       run: |
-  #         npm i --force
-  #         npm test -- --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit --ci --runInBand
-  #     - name: Upload test reports
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: test-reports
-  #         path: |
-  #           application/junit.xml
-  #           application/coverage/cobertura-coverage.xml
-  #           application/coverage/
+  unit-tests:
+    needs: build_compile
+    runs-on: ubuntu-latest
+    container:
+      image: node:20-alpine
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+      - name: Run tests
+        working-directory: application
+        continue-on-error: true
+        run: |
+          npm ci
+          npm test -- --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit --ci --runInBand
+      - name: Upload test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            junit.xml
+            coverage/cobertura-coverage.xml
+            coverage/
 
   # cypress_tests:
   #   runs-on: ubuntu-latest
