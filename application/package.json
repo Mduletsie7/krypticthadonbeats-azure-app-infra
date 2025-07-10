@@ -29,7 +29,7 @@
     "eject": "react-scripts eject",
     "cy:open": "cypress open",
     "e2e": "cypress run",
-    "lint": "eslint ."
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file eslint-sarif-report.sarif"
   },
   "eslintConfig": {
     "extends": [

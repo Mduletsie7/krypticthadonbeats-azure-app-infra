@@ -70,8 +70,8 @@ jobs:
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
-          name: eslint-sarif-report
-          path: application/eslint-sarif-report.sarif
+          sarif_file: application/eslint-sarif-report.sarif
+          wait-for-processing: true
 
   unit_tests:
     needs: build_compile
