@@ -70,10 +70,10 @@ jobs:
     needs: build_compile
     runs-on: ubuntu-latest
     container:
-      image: node:latest
+      image: cypress/included:14.5.1
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies and run Cypress tests
+      - name: Run Cypress tests
         working-directory: application
         run: |
           npm ci
