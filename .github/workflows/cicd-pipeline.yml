@@ -38,7 +38,7 @@ jobs:
           name: build
           path: application/build
 
-  unit-tests:
+  unit_tests:
     needs: build_compile
     runs-on: ubuntu-latest
     container:
@@ -83,7 +83,7 @@ jobs:
           npm run e2e
 
   build_image:
-    needs: build_compile
+    needs: [build_compile, unit_tests, cypress_tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
