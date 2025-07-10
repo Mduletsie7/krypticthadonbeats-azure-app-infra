@@ -78,7 +78,7 @@ jobs:
         run: |
           npm ci
           npm start &
-          npx wait-on http://localhost:3000
+          npx wait-on http://localhost:3000 
           npm run e2e
 
   # build_image:
