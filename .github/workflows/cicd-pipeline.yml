@@ -12,10 +12,10 @@ permissions:
   security-events: write  
 
 env:
-  REGISTRY_URI: ${{ secrets.AZURE_REGISTRY }}
-  REGISTRY_NAME: ${{ secrets.AZURE_REGISTRY_NAME }}
+  REGISTRY_URI: ${{ vars.AZURE_REGISTRY }}
+  REGISTRY_NAME: ${{ vars.AZURE_REGISTRY_NAME }}
   IMAGE_TAG: ${{ github.sha }}
-  DOCKER_IMAGE: ${{ secrets.AZURE_REGISTRY }}/{{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }}
+  DOCKER_IMAGE: ${{ vars.AZURE_REGISTRY }}/{{ vars.AZURE_REGISTRY_NAME }}:${{ github.sha }}
   SONAR_USER_HOME: ${{ github.workspace }}/.sonar
   GIT_DEPTH: 0
   SAST_EXCLUDED_PATHS: "infrastructure/**"
@@ -54,6 +54,10 @@ jobs:
         run: |
           npm ci
           npm install @microsoft/eslint-formatter-sarif@3.1.0
+
+      - name: List JS/TS files
+        working-directory: application
+        run: find . -name "*.js" -o -name "*.ts" -o -name "*.tsx" -o -name "*.jsx"
 
       - name: Run ESLint
         working-directory: application
