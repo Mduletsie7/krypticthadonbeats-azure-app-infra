@@ -60,10 +60,10 @@ jobs:
         run: find . -name "*.js" -o -name "*.ts" -o -name "*.tsx" -o -name "*.jsx"
 
       - name: Run ESLint
-        working-directory: application/src
+        working-directory: application
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
-        run: npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+        run: npm run lint
         continue-on-error: true
 
       - name: Upload analysis results to GitHub
