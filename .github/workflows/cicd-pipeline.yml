@@ -55,10 +55,6 @@ jobs:
           npm ci
           npm install @microsoft/eslint-formatter-sarif@3.1.0
 
-      - name: List JS/TS files
-        working-directory: application/src
-        run: find . -name "*.js" -o -name "*.ts" -o -name "*.tsx" -o -name "*.jsx"
-
       - name: Run ESLint
         working-directory: application
         env:
@@ -67,10 +63,11 @@ jobs:
         continue-on-error: true
 
       - name: Upload analysis results to GitHub
+        working-directory: application
         if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: application/eslint-sarif-report.sarif
+          sarif_file: eslint-sarif-report.sarif
           wait-for-processing: true
 
   unit_tests:
