@@ -66,19 +66,20 @@ jobs:
             application/coverage/cobertura-coverage.xml
             application/coverage
 
-  # cypress_tests:
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: node:latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install dependencies and run Cypress tests
-  #       working-directory: application
-  #       run: |
-  #         npm i --force
-  #         npm start &
-  #         npx wait-on http://localhost:3000
-  #         npm run e2e
+  cypress_tests:
+    needs: build_compile
+    runs-on: ubuntu-latest
+    container:
+      image: node:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies and run Cypress tests
+        working-directory: application
+        run: |
+          npm ci
+          npm start &
+          npx wait-on http://localhost:3000
+          npm run e2e
 
   # build_image:
   #   needs: build_compile
