@@ -1,28 +1,26 @@
 variable "acr_name" {
-  type        = string
   description = "The name of the Azure Container Registry."
+  type        = string
 }
 
 variable "resource_group_name" {
-  type        = string
   description = "The name of the resource group."
+  type        = string
 }
 
 variable "location" {
-  type        = string
   description = "Azure region."
+  type        = string
 }
 
 variable "sku" {
-  type        = string
-  default     = "Basic"
   description = "The SKU of the ACR."
+  type        = string
 }
 
 variable "admin_enabled" {
-  type        = bool
-  default     = false
   description = "Enable admin access?"
+  type        = bool
 }
 
 variable "common_tags" {

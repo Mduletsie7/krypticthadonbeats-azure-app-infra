@@ -18,8 +18,8 @@ variables:
   REGISTRY_NAME: $AZURE_REGISTRY_NAME
   IMAGE_TAG: $CI_COMMIT_SHA
   DOCKER_IMAGE: $REGISTRY_URI/$REGISTRY_NAME:$IMAGE_TAG
-  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Cache location
-  GIT_DEPTH: "0"  # Ensure full history for analysis
+  SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar" 
+  GIT_DEPTH: "0" 
   SAST_EXCLUDED_PATHS: "infrastructure/**"
   SAST_INCLUDED_PATHS: "application/"
 
@@ -28,8 +28,7 @@ cache:
   paths:
     - .sonar/cache
 
-# Anchors
-.azure-login: &azure_login
+.azure-acr-login: &azure_acr_login
   - echo "$AZURE_PASSWORD" | docker login $AZURE_REGISTRY -u "$AZURE_USERNAME" --password-stdin
 
 build_compile:
@@ -67,13 +66,22 @@ unit-tests:
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   allow_failure: true
 
+cypress_tests:
+  image: node:latest
+  stage: test
+  needs: ["build_image"]
+  script:
+    - npm ci
+    - npm start &
+    - npm run e2e
+
 build_image:
   stage: build_image
   image: docker:latest
   services:
     - docker:dind
   before_script:
-    - *azure_login
+    - *azure_acr_login
   script:
     - echo "Building Docker image..."
     - cd application/
@@ -84,21 +92,21 @@ build_image:
   after_script:
     - docker logout $REGISTRY_URI
 
-sonarqube-check:
-  image: sonarsource/sonar-scanner-cli:latest
-  stage: sonar_scan
-  cache: {}
-  script:
-    - sonar-scanner 
-        -Dsonar.projectKey=krypticthadonbeats 
-        -Dsonar.sources=. 
-        -Dsonar.host.url=$SONAR_HOST_URL 
-        -Dsonar.login=$SONAR_TOKEN
-  only:
-    - merge_requests
-    - develop
-    - feature
-    - main
+# Will revisit this section later 
+# sonarqube-check:
+#   image: sonarsource/sonar-scanner-cli:latest
+#   stage: sonar_scan
+#   cache: {}
+#   script:
+#     - sonar-scanner 
+#         -Dsonar.projectKey=$SONAR_PROJECT_KEY
+#         -Dsonar.sources=. 
+#         -Dsonar.host.url=$SONAR_HOST_URL 
+#         -Dsonar.login=$SONAR_TOKEN
+#   only:
+#     - develop
+#     - feature
+#     - main
 
 container_scanning:
   stage: container_scanning
@@ -108,7 +116,7 @@ container_scanning:
   needs: ["build_image"]
   before_script:
     - apk add --no-cache curl
-    - *azure_login
+    - *azure_acr_login
   script:
     # Install Docker Scout
     - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh

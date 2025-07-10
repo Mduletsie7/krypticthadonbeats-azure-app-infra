@@ -4,6 +4,8 @@ resource "azurerm_log_analytics_workspace" "log_analytics_ws" {
   resource_group_name = var.resource_group_name
   sku                 = "PerGB2018"
   retention_in_days   = 30
+
+  tags = var.common_tags
 }
 
 resource "azurerm_container_app_environment" "aca_environment" {
@@ -11,6 +13,8 @@ resource "azurerm_container_app_environment" "aca_environment" {
   location                   = var.location
   resource_group_name        = var.resource_group_name
   log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_ws.id
+
+  tags = var.common_tags
 }
 
 

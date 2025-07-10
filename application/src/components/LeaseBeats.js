@@ -3,7 +3,6 @@ import '../styles/LeaseBeats.css';
 
 // Optimized LeaseBeats component
 const LeaseBeats = memo(() => {
-  // Move static content outside render to prevent recreation
   const iframeContent = useMemo(() => ({
     __html: '<iframe src="https://player.beatstars.com/?storeId=117930" width="100%" height="800" style="max-width:1024px;" title="BeatStars Player" loading="lazy"> -- none -- </iframe>'
   }), []);
@@ -22,7 +21,6 @@ const LeaseBeats = memo(() => {
   );
 });
 
-// Add display name for better debugging
 LeaseBeats.displayName = 'LeaseBeats';
 
 export default LeaseBeats;

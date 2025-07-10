@@ -1,101 +1,70 @@
-# Terraform
-
-# Local Terraform directories
-**/.terraform/
-**/.terraform.lock.hcl
-
-# Terraform state files
-*.tfstate
-*.tfstate.*
-*.tfstate.backup
-
-# Crash log files
-crash.log
-crash.*.log
-
-# CLI configuration files
-.terraformrc
-terraform.rc
-
-# Plan output files
-*.tfplan
-*.plan
-plan.out
-
-# Debug files
-debug.log
-
-# Override and generated files
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-
-# Cost estimation files
-infracost-usage.yml
-
-# Sensitive variable files
-*.tfvars
-*.tfvars.json
-*.env
-.env.*
-
-# Node.js / React
-
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
+# Node.js / React / TypeScript Projects
 
 # Dependencies
 node_modules/
 .pnp/
 .pnp.js
 
-# Build and coverage
+# Build artifacts
+dist/
 build/
 coverage/
-
-# Environment files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env
+.cache/
+*.tsbuildinfo
+out/
+.next/
 
 # Logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Docker
+# Environment variables
+.env
+.env.*
+!.env.example
 
+# Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+.cypress/
+
+# Test reports
+mochawesome-report/
+allure-results/
+junit/
+
+# Terraform
+
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+*.tfplan
+*.plan
+plan.out
+.terraformrc
+terraform.rc
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+crash.log
+crash.*.log
+debug.log
+infracost-usage.yml
+
+# Docker
 *.tar
 *.img
 docker-compose.override.yml
 
-# Editor / OS Files
-
+# Editor / IDE / OS
 .vscode/
 .idea/
 *.swp

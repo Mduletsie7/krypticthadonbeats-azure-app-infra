@@ -11,6 +11,7 @@
     "aws-sdk": "^2.1573.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "hot-shots": "^11.1.0",
     "primeflex": "^3.3.1",
     "primeicons": "^6.0.1",
     "primereact": "^10.7.0",
@@ -25,7 +26,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "jest --coverage --silent --forceExit",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cy:open": "cypress open",
+    "e2e": "cypress run",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif --output-file eslint-sarif-report.sarif"
   },
   "eslintConfig": {
     "extends": [
@@ -52,9 +56,14 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/cypress": "^0.1.6",
     "babel-jest": "^30.0.2",
+    "cypress": "^14.5.1",
+    "eslint": "^8.57.1",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",
-    "jest-junit": "^16.0.0"
+    "jest-junit": "^16.0.0",
+    "typescript": "^4.9.5",
+    "wait-on": "^8.0.3"
   }
 }

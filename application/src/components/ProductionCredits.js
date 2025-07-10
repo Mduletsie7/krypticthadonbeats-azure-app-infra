@@ -52,6 +52,13 @@ const ProductionCredits = () => {
       artworkKey: 'images/TheyCallMeCaddy.jpg', 
       audioKey: 'music/GreenlandCak_BORN-KINGS.mp3' 
     },
+    {
+      id: 7,
+      title: 'Pavement Poems', 
+      artist: 'Bugzy Niaire', 
+      artworkKey: 'images/PavementPoems.jpg', 
+      audioKey: 'music/GreenlandCak_BORN-KINGS.mp3' 
+    },
   ], []);
 
   // Handle play/pause - only one song can play at a time
