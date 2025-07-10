@@ -35,8 +35,8 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist/
+          name: build
+          path: application/build
 
   unit-tests:
     needs: build_compile
@@ -50,7 +50,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: build
       - name: Run tests
         working-directory: application
         continue-on-error: true
@@ -62,9 +62,9 @@ jobs:
         with:
           name: test-reports
           path: |
-            junit.xml
-            coverage/cobertura-coverage.xml
-            coverage/
+            application/junit.xml
+            application/coverage/cobertura-coverage.xml
+            application/coverage
 
   # cypress_tests:
   #   runs-on: ubuntu-latest
