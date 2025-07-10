@@ -133,7 +133,9 @@ jobs:
     uses: ./.github/workflows/container_scanning.yml
     with:
       image_tag: ${{ github.sha }}
-    secrets: inherit
+    secrets:
+      azure_registry: ${{ secrets.AZURE_REGISTRY }}
+      azure_registry_name: ${{ secrets.AZURE_REGISTRY_NAME }}
 
   # deploy:
   #   needs: build_image
