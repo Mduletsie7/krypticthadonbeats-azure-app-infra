@@ -141,24 +141,24 @@ jobs:
       - name: Logout Docker
         run: docker logout ${{ secrets.AZURE_REGISTRY }}
 
-  # sonarqube-check:
-  #   if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: sonarsource/sonar-scanner-cli:latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Run SonarQube Scanner
-  #       env:
-  #         SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-  #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #       run: |
-  #         sonar-scanner \
-  #           -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-  #           -Dsonar.sources=. \
-  #           -Dsonar.host.url=$SONAR_HOST_URL \
-  #           -Dsonar.login=$SONAR_TOKEN
+  sonarqube-check:
+    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container:
+      image: sonarsource/sonar-scanner-cli:latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
 
   trivy_scan:
     needs: build_image
