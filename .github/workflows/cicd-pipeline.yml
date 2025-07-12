@@ -150,6 +150,10 @@ jobs:
       options: --user root
     steps:
       - uses: actions/checkout@v4
+      - name: Download test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: test-reports
       - name: Run SonarQube Scanner
         env:
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
@@ -161,10 +165,7 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=$SONAR_HOST_URL \
             -Dsonar.login=$SONAR_TOKEN
-      - name: Download test coverage
-        uses: actions/download-artifact@v4
-        with:
-          name: test-reports
+
 
 
   trivy_scan:
