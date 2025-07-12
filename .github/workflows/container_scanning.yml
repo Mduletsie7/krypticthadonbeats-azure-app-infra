@@ -1,4 +1,4 @@
-name: Trivy Container scanning
+name: Trivy Container Scanning
 
 on:
   workflow_call:
@@ -12,40 +12,87 @@ on:
       azure_registry_name:
         required: true
         type: string
+    secrets:
+      AZURE_USERNAME:
+        required: true
+      AZURE_PASSWORD:
+        required: true
 
 jobs:
   trivy_scan:
-    name: Container Image Scan
+    name: Container Image Security Scan
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set image tag environment variables
         run: |
           echo "DOCKER_IMAGE=${{ inputs.azure_registry }}/${{ inputs.azure_registry_name }}:${{ inputs.image_tag }}" >> $GITHUB_ENV
 
-      - name: Build Docker image
-        working-directory: application
-        run: |
-          docker build -t $DOCKER_IMAGE .
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.azure_registry }}
+          username: ${{ secrets.AZURE_USERNAME }}
+          password: ${{ secrets.AZURE_PASSWORD }}
 
-      - name: Scan Docker image with Trivy
-        uses: aquasecurity/trivy-action@0.20.0
+      - name: Pull Docker image from registry
+        run: |
+          docker pull $DOCKER_IMAGE
+
+      - name: Run Trivy vulnerability scanner (SARIF for GitHub Security)
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.DOCKER_IMAGE }}
           format: 'sarif'
           output: 'trivy-results.sarif'
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          exit-code: '0'  # Don't fail on this step
 
-
-      - name: Upload Trivy SARIF Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-sarif-report
-          path: trivy-results.sarif
-
-      - name: Upload Trivy SARIF Report
+      - name: Upload Trivy SARIF Report to GitHub Security
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+          category: 'container-security'
+
+      - name: Run Trivy scanner (Table format for logs)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.DOCKER_IMAGE }}
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'  # Don't fail yet, just show results
+
+      - name: Run Trivy scanner (JSON format for detailed report)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.DOCKER_IMAGE }}
+          format: 'json'
+          output: 'trivy-report.json'
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          exit-code: '0'
+
+      - name: Upload scan reports as artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-security-reports
+          path: |
+            trivy-results.sarif
+            trivy-report.json
+          retention-days: 30
+
+      - name: Check for CRITICAL vulnerabilities (Fail build)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.DOCKER_IMAGE }}
+          format: 'table'
+          severity: 'CRITICAL'
+          exit-code: '1'  # Fail build on CRITICAL vulnerabilities
+
+      - name: Logout from Azure Container Registry
+        if: always()
+        run: docker logout ${{ inputs.azure_registry }}
