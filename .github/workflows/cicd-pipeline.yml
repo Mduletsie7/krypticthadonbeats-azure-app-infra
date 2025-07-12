@@ -83,6 +83,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build
+          path: application/build
       - name: Run tests
         working-directory: application
         continue-on-error: true
@@ -95,8 +96,8 @@ jobs:
           name: test-reports
           path: |
             application/junit.xml
-            application/coverage/cobertura-coverage.xml
-            application/coverage
+            application/coverage/
+          retention-days: 1
 
   cypress_tests:
     needs: build_compile
@@ -113,6 +114,47 @@ jobs:
           npm start &
           npx wait-on http://localhost:3000 
           npm run e2e
+
+  sonarqube-check:
+    needs: [build_compile, unit_tests, cypress_tests]
+    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container:
+      image: sonarsource/sonar-scanner-cli:latest
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Download test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: test-reports
+          path: application/
+          
+      - name: Verify coverage files and project structure
+        run: |
+          echo "=== Project Structure ==="
+          ls -la
+          echo "=== Application Directory ==="
+          ls -la application/
+          echo "=== Coverage Directory ==="
+          ls -la application/coverage/ || echo "Coverage directory not found"
+          echo "=== LCOV File Content (first 20 lines) ==="
+          cat application/coverage/lcov.info | head -20 || echo "LCOV file missing or empty"
+          echo "=== All coverage files ==="
+          find . -name "*.info" -o -name "*.xml" | grep -E "(lcov|cobertura|coverage)" | head -10
+          echo "=== Sonar Properties File ==="
+          cat sonar-project.properties || echo "sonar-project.properties not found"
+
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          # Use sonar-project.properties file with environment variable override
+          sonar-scanner \
+            -Dsonar.login=$SONAR_TOKEN
 
   build_image:
     needs: [build_compile, unit_tests, cypress_tests, sonarqube-check]
@@ -140,44 +182,6 @@ jobs:
 
       - name: Logout Docker
         run: docker logout ${{ secrets.AZURE_REGISTRY }}
-
-  sonarqube-check:
-    needs: [build_compile, unit_tests, cypress_tests]
-    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    container:
-      image: sonarsource/sonar-scanner-cli:latest
-      options: --user root
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download test coverage
-        uses: actions/download-artifact@v4
-        with:
-          name: test-reports
-          path: .
-          
-      - name: Unzip test reports
-        run: unzip -o test-reports.zip -d .
-
-      - name: Confirm lcov exists
-        run: |
-          ls -la application/coverage
-          cat application/coverage/lcov.info || echo "Coverage file missing or empty"
-
-
-      - name: Run SonarQube Scanner
-        env:
-          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN
-
-
 
   trivy_scan:
     needs: build_image
