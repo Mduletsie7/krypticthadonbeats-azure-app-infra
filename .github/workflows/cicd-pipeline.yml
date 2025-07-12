@@ -142,6 +142,7 @@ jobs:
         run: docker logout ${{ secrets.AZURE_REGISTRY }}
 
   sonarqube-check:
+    needs: [build_image, unit_tests, cypress_tests]
     if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     container:
