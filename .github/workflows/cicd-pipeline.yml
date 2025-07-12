@@ -22,26 +22,6 @@ env:
   SAST_INCLUDED_PATHS: "application/"
 
 jobs:
-  build_compile:
-    runs-on: ubuntu-latest
-    container:
-      image: node:20-alpine
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Install dependencies and build
-        working-directory: application
-        run: |
-          npm ci
-          unset CI
-          npm run build
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: application/build
-
   eslint:
     name: Run eslint scanning
     runs-on: ubuntu-latest
@@ -49,7 +29,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install ESLint
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: application/package-lock.json
+
+      - name: Install dependencies
         working-directory: application
         run: |
           npm ci
@@ -70,52 +57,126 @@ jobs:
           checkout_path: application
           wait-for-processing: true
 
-  unit_tests:
-    needs: build_compile
+  build_compile:
     runs-on: ubuntu-latest
-    container:
-      image: node:20-alpine
+    needs: eslint
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          name: build
-      - name: Run tests
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: application/package-lock.json
+
+      - name: Install dependencies and build
+        working-directory: application
+        run: |
+          npm ci
+          unset CI
+          npm run build
+          echo "Build completed successfully"
+
+  unit_tests:
+    needs: build_compile
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: application/package-lock.json
+
+      - name: Install dependencies and run tests
         working-directory: application
         continue-on-error: true
         run: |
           npm ci
           npm test -- --coverage --coverageReporters=lcov --coverageReporters=cobertura --reporters=default --reporters=jest-junit --ci --runInBand
+
       - name: Upload test reports
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: |
             application/junit.xml
-            application/coverage/cobertura-coverage.xml
-            application/coverage
+            application/coverage/
+          retention-days: 1
 
   cypress_tests:
     needs: build_compile
     runs-on: ubuntu-latest
-    container:
-      image: cypress/included:14.5.1
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: application/package-lock.json
+
+      - name: Install dependencies
+        working-directory: application
+        run: npm ci
+
       - name: Run Cypress tests
         working-directory: application
         continue-on-error: true
         run: |
-          npm ci
           npm start &
           npx wait-on http://localhost:3000 
           npm run e2e
 
-  build_image:
+  sonarqube-check:
     needs: [build_compile, unit_tests, cypress_tests]
+    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container:
+      image: sonarsource/sonar-scanner-cli:latest
+      options: --user root
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Download test coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: test-reports
+          path: application/
+          
+      - name: Verify coverage files and project structure
+        run: |
+          echo "=== Project Structure ==="
+          ls -la
+          echo "=== Application Directory ==="
+          ls -la application/
+          echo "=== Coverage Directory ==="
+          ls -la application/coverage/ || echo "Coverage directory not found"
+          echo "=== LCOV File Content (first 20 lines) ==="
+          cat application/coverage/lcov.info | head -20 || echo "LCOV file missing or empty"
+          echo "=== All coverage files ==="
+          find . -name "*.info" -o -name "*.xml" | grep -E "(lcov|cobertura|coverage)" | head -10
+          echo "=== Sonar Properties File ==="
+          cat sonar-project.properties || echo "sonar-project.properties not found"
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          # Use sonar-project.properties file with environment variable override
+          sonar-scanner \
+            -Dsonar.login=$SONAR_TOKEN
+  build_image:
+    needs: [build_compile, unit_tests, cypress_tests, sonarqube-check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -137,36 +198,58 @@ jobs:
             --tag ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }} \
             --push \
             .
-
       - name: Logout Docker
         run: docker logout ${{ secrets.AZURE_REGISTRY }}
 
-  # sonarqube-check:
-  #   if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: sonarsource/sonar-scanner-cli:latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Run SonarQube Scanner
-  #       env:
-  #         SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
-  #         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #       run: |
-  #         sonar-scanner \
-  #           -Dsonar.projectKey=$SONAR_PROJECT_KEY \
-  #           -Dsonar.sources=. \
-  #           -Dsonar.host.url=$SONAR_HOST_URL \
-  #           -Dsonar.login=$SONAR_TOKEN
-
   trivy_scan:
     needs: build_image
-    uses: ./.github/workflows/container_scanning.yml
-    with:
-      azure_registry: ${{ vars.AZURE_REGISTRY }}
-      azure_registry_name: ${{ vars.AZURE_REGISTRY_NAME }}
-      image_tag: ${{ github.sha }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.AZURE_REGISTRY }}
+          username: ${{ secrets.AZURE_USERNAME }}
+          password: ${{ secrets.AZURE_PASSWORD }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ vars.AZURE_REGISTRY }}/${{ vars.AZURE_REGISTRY_NAME }}:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          exit-code: '0'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: 'container-security'
+
+      - name: Run Trivy scanner with build failure on CRITICAL/HIGH
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ vars.AZURE_REGISTRY }}/${{ vars.AZURE_REGISTRY_NAME }}:${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+
+      - name: Upload scan report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-scan-report
+          path: trivy-results.sarif
+          retention-days: 30
+
+      - name: Logout Docker
+        if: always()
+        run: docker logout ${{ vars.AZURE_REGISTRY }}
 
   # deploy:
   #   needs: build_image
