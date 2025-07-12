@@ -154,6 +154,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: test-reports
+          path: . 
+
+      - name: Confirm lcov exists
+        run: |
+          ls -la application/coverage
+          cat application/coverage/lcov.info || echo "Coverage file missing or empty"
+          
+                
       - name: Run SonarQube Scanner
         env:
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
