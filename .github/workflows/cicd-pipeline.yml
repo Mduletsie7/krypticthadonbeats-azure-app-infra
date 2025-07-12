@@ -136,7 +136,6 @@ jobs:
           npx wait-on http://localhost:3000 
           npm run e2e
 
-  # Rest of your pipeline remains the same...
   sonarqube-check:
     needs: [build_compile, unit_tests, cypress_tests]
     if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/feature/') || github.ref == 'refs/heads/main'
@@ -169,10 +168,106 @@ jobs:
           find . -name "*.info" -o -name "*.xml" | grep -E "(lcov|cobertura|coverage)" | head -10
           echo "=== Sonar Properties File ==="
           cat sonar-project.properties || echo "sonar-project.properties not found"
-
       - name: Run SonarQube Scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          # Use sonar-project.properties file with environment variable override
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
+  build_image:
+    needs: [build_compile, unit_tests, cypress_tests, sonarqube-check]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.AZURE_REGISTRY }}
+          username: ${{ secrets.AZURE_USERNAME }}
+          password: ${{ secrets.AZURE_PASSWORD }}
+
+      - name: Build and push image to Azure Container Registry
+        working-directory: application
+        run: |
+          docker buildx build \
+            --tag ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }} \
+            --push \
+            .
+      - name: Logout Docker
+        run: docker logout ${{ secrets.AZURE_REGISTRY }}
+
+  trivy_scan:
+    needs: build_image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ vars.AZURE_REGISTRY }}
+          username: ${{ secrets.AZURE_USERNAME }}
+          password: ${{ secrets.AZURE_PASSWORD }}
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ vars.AZURE_REGISTRY }}/${{ vars.AZURE_REGISTRY_NAME }}:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+          exit-code: '0'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: 'container-security'
+
+      - name: Run Trivy scanner with build failure on CRITICAL/HIGH
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ vars.AZURE_REGISTRY }}/${{ vars.AZURE_REGISTRY_NAME }}:${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '1'
+
+      - name: Upload scan report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-scan-report
+          path: trivy-results.sarif
+          retention-days: 30
+
+      - name: Logout Docker
+        if: always()
+        run: docker logout ${{ vars.AZURE_REGISTRY }}
+
+  # deploy:
+  #   needs: build_image
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: mcr.microsoft.com/azure-cli:latest
+  #   steps:
+  #     - name: Azure login and deploy container app
+  #       env:
+  #         AZURE_USERNAME: ${{ secrets.AZURE_USERNAME }}
+  #         AZURE_PASSWORD: ${{ secrets.AZURE_PASSWORD }}
+  #         AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #         AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #         AZURE_CONTAINER_APP_NAME: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
+  #         AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+  #         DOCKER_IMAGE: ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }}
+  #       run: |
+  #         az login --service-principal --username "$AZURE_USERNAME" --password "$AZURE_PASSWORD" --tenant "$AZURE_TENANT_ID"
+  #         az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+  #         az containerapp update --name "$AZURE_CONTAINER_APP_NAME" --resource-group "$AZURE_RESOURCE_GROUP" --image "$DOCKER_IMAGE"
+  #         az logout
