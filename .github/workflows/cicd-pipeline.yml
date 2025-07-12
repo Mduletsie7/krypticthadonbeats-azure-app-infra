@@ -146,6 +146,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: sonarsource/sonar-scanner-cli:latest
+      options: --user root
     steps:
       - uses: actions/checkout@v4
       - name: Run SonarQube Scanner
