@@ -115,7 +115,7 @@ jobs:
           npm run e2e
 
   build_image:
-    needs: [build_compile, unit_tests, cypress_tests]
+    needs: [build_compile, unit_tests, cypress_tests, sonarqube-check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
