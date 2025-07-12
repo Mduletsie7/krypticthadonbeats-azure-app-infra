@@ -154,6 +154,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: test-reports
+          path: .
       - name: Run SonarQube Scanner
         env:
           SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
