@@ -227,7 +227,7 @@ jobs:
   #       run: docker logout ${{ secrets.AZURE_REGISTRY }}
 
   trivy_scan:
-    needs: build_image
+    needs: docker_build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
