@@ -175,31 +175,56 @@ jobs:
           # Use sonar-project.properties file with environment variable override
           sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
-  build_image:
-    needs: [build_compile, unit_tests, cypress_tests, sonarqube-check]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+  docker_build:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Login to Docker Hub
+          uses: docker/login-action@v3
+          with:
+            username: ${{ vars.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Login to Azure Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ secrets.AZURE_REGISTRY }}
-          username: ${{ secrets.AZURE_USERNAME }}
-          password: ${{ secrets.AZURE_PASSWORD }}
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v3
 
-      - name: Build and push image to Azure Container Registry
-        working-directory: application
-        run: |
-          docker buildx build \
-            --tag ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }} \
-            --push \
-            .
-      - name: Logout Docker
-        run: docker logout ${{ secrets.AZURE_REGISTRY }}
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
+        - name: Build and push image to Azure Container Registry
+          working-directory: application
+          run: |
+            docker buildx build \
+              --tag ${{ vars.APP_NAME }}:${{ github.sha }} \
+              --push \
+              .
+        - name: Logout Docker
+          run: docker logout ${{ secrets.AZURE_REGISTRY }}
+
+  # build_image:
+  #   needs: [build_compile, unit_tests, cypress_tests, sonarqube-check]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v2
+
+  #     - name: Login to Azure Container Registry
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ${{ secrets.AZURE_REGISTRY }}
+  #         username: ${{ secrets.AZURE_USERNAME }}
+  #         password: ${{ secrets.AZURE_PASSWORD }}
+
+  #     - name: Build and push image to Azure Container Registry
+  #       working-directory: application
+  #       run: |
+  #         docker buildx build \
+  #           --tag ${{ secrets.AZURE_REGISTRY }}/${{ secrets.AZURE_REGISTRY_NAME }}:${{ github.sha }} \
+  #           --push \
+  #           .
+  #     - name: Logout Docker
+  #       run: docker logout ${{ secrets.AZURE_REGISTRY }}
 
   trivy_scan:
     needs: build_image
