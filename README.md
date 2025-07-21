@@ -3,7 +3,7 @@
 This project is a full-stack DevOps deployment of a React-based website designed to sell music beats. It showcases an end-to-end CI/CD pipeline, containerization, and infrastructure as code on Azure, aimed at automating deployment and improving scalability, cost efficiency, and infrastructure management.
 
 ## 🚀 Live Demo
-> Coming soon
+> https://krypticthadonbeats-dev-test-c6agb5dpfpe8h9f7.canadacentral-01.azurewebsites.net
 
 ---
 
@@ -16,9 +16,9 @@ This project is a full-stack DevOps deployment of a React-based website designed
 - **Cloud Provider**: Microsoft Azure
   - Resource Group
   - Azure Container Registry
-  - Azure Container App
+  - Azure App Service 
   - V-Net
-  - Storage (for Terraform remote state and website media files)
+  - Storage (for Terraform remote state management and website media files)
   - VM: Ubuntu virtual machine for self hosted Sonarqube static code analysis
 
 ---
