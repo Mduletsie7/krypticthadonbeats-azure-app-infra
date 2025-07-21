@@ -129,8 +129,8 @@ const PricingCard = memo(({ plan, onPlanSelect, isSelected }) => {
           style={{ 
             borderRadius: "6px", 
             cursor: "pointer",
-            backgroundColor: plan.popular ? "burlywood" : undefined,
-            borderColor: plan.popular ? "burlywood" : undefined
+            backgroundColor: plan.popular ? "#eed7bb" : undefined,
+            borderColor: plan.popular ? "#eed7bb" : undefined
           }}
           onClick={handleCardClick}
           onKeyDown={handleKeyDown}

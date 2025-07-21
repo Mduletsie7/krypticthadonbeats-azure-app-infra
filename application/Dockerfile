@@ -26,4 +26,8 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
 EXPOSE 3000
-CMD [ "serve", "-s", "build", "-l", "3000" ]
+CMD ["sh", "-c", "serve -s build -l ${PORT:-3000}"]
+
+LABEL maintainer="mdumisidev@gmail.com"
+LABEL version="1.0"
+LABEL description="React container for beat-selling website"

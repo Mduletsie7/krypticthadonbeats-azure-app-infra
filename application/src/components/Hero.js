@@ -11,7 +11,8 @@ const Hero = () => {
               <span className="hero-brand">Kryptic</span> Tha Don
             </h1>
             <p className="hero-description">
-              Music Producer from Cape Town, South Africa with a passion for Hip-Hop.
+              Kryptic Tha Don, born Mdumisi Kelvin Letsie,
+              is a music producer from Cape Town, South Africa with a passion for Hip-Hop. 
             </p>
           </header>
         </div>
