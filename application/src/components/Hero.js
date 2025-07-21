@@ -11,9 +11,8 @@ const Hero = () => {
               <span className="hero-brand">Kryptic</span> Tha Don
             </h1>
             <p className="hero-description">
-              Mdumisi Kelvin Letsie, also known as Kryptic Tha Don, 
-              is a hip-hop music producer from Cape Town, South Africa. 
-              With a deep passion for Hip-Hop, he creates instrumentals that speak to artists looking for originality and soul.
+              Kryptic Tha Don, born Mdumisi Kelvin Letsie,
+              is a music producer from Cape Town, South Africa with a passion for Hip-Hop. 
             </p>
           </header>
         </div>
