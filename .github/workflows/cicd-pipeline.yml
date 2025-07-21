@@ -266,7 +266,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: '${{ vars.AZURE_WEBAPP_NAME }}'
-          slot-name: 'develop'
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          slot-name: 'production'
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_83bde63969174aef8fdcef28aebc676a }}
           images: '${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY_NAME }}:${{ github.sha }}'
