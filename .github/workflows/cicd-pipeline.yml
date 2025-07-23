@@ -269,16 +269,19 @@ jobs:
 
       - name: Set deployment slot based on branch
         id: set-vars
+        env:
+          PROD_PROFILE: ${{ secrets.PROD_PUBLISH_PROFILE }}
+          DEVELOP_PROFILE: ${{ secrets.DEVELOP_PUBLISH_PROFILE }}
         run: |
           if [[ "${GITHUB_REF##*/}" == "main" ]]; then
             echo "env_name=production" >> $GITHUB_OUTPUT
             echo "app_name=${{ vars.AZURE_WEBAPP_NAME }}" >> $GITHUB_OUTPUT
-            echo "publish_profile=${{ secrets.PROD_PUBLISH_PROFILE }}" >> $GITHUB_OUTPUT
+            echo "publish_profile=$PROD_PROFILE" >> $GITHUB_OUTPUT
             echo "slot=production" >> $GITHUB_OUTPUT
           else
             echo "env_name=develop" >> $GITHUB_OUTPUT
             echo "app_name=${{ vars.AZURE_WEBAPP_NAME_DEVELOP }}" >> $GITHUB_OUTPUT
-            echo "publish_profile=${{ secrets.DEVELOP_PUBLISH_PROFILE }}" >> $GITHUB_OUTPUT
+            echo "publish_profile=$DEVELOP_PROFILE" >> $GITHUB_OUTPUT
             echo "slot=develop" >> $GITHUB_OUTPUT
           fi
 
