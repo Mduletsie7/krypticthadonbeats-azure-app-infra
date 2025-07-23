@@ -7,6 +7,11 @@ This project is a full-stack DevOps deployment of a React-based website designed
 
 ---
 
+## 🖥️ Preview
+<img width="800" height="600" alt="1" src="https://github.com/user-attachments/assets/120fb098-6e04-45d0-9ed2-31e72c7c24d4" />
+
+https://github.com/user-attachments/assets/6e664485-195f-4d65-b662-1fe0eac89c14
+
 ## 🛠️ Tech Stack
 
 - **Frontend**: React, Node.js
