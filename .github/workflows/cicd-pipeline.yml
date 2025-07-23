@@ -291,5 +291,5 @@ jobs:
         with:
           app-name: ${{ steps.set-vars.outputs.app_name }}
           slot-name: ${{ steps.set-vars.outputs.slot }}
-          publish-profile: ${{ steps.set-vars.outputs.publish_profile }}
+          publish-profile: ${{ env.publish_profile }}
           images: '${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY_NAME }}:${{ github.sha }}'
