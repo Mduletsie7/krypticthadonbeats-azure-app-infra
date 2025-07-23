@@ -276,7 +276,7 @@ jobs:
           if [[ "${GITHUB_REF##*/}" == "main" ]]; then
             echo "env_name=production" >> $GITHUB_OUTPUT
             echo "app_name=${{ vars.AZURE_WEBAPP_NAME }}" >> $GITHUB_OUTPUT
-            echo "publish_profile=$PROD_PROFILE" >> $GITHUB_ENV
+            echo "publish_profile=$PROD_PROFILE" >> $GITHUB_OUTPUT
             echo "slot=production" >> $GITHUB_OUTPUT
           else
             echo "env_name=develop" >> $GITHUB_OUTPUT
@@ -291,5 +291,5 @@ jobs:
         with:
           app-name: ${{ steps.set-vars.outputs.app_name }}
           slot-name: ${{ steps.set-vars.outputs.slot }}
-          publish-profile: ${{ env.publish_profile }}
+          publish-profile: ${{ steps.set-vars.outputs.publish_profile }}
           images: '${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY_NAME }}:${{ github.sha }}'
