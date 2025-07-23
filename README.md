@@ -7,11 +7,10 @@ This project is a full-stack DevOps deployment of a React-based website designed
 
 ---
 
-## 🖥️ Deskop Preview
+## 🖥️ Preview
 <img width="800" height="600" alt="1" src="https://github.com/user-attachments/assets/120fb098-6e04-45d0-9ed2-31e72c7c24d4" />
-<img width="800" height="600" alt="2" src="https://github.com/user-attachments/assets/8479dedb-ae4e-4973-81c1-5767a8e73854" />
-<img width="800" height="600" alt="3" src="https://github.com/user-attachments/assets/8df25cdb-203a-43a5-a626-7e003ac1a18e" />
-<img width="800" height="600" alt="4" src="https://github.com/user-attachments/assets/a7a72272-bccb-43f4-9894-7fd8fa8ac3f2" />
+
+https://github.com/user-attachments/assets/6e664485-195f-4d65-b662-1fe0eac89c14
 
 ## 🛠️ Tech Stack
 
