@@ -3,7 +3,7 @@
 This project is a full-stack DevOps deployment of a React-based website designed to sell music beats. It showcases an end-to-end CI/CD pipeline, containerization, and infrastructure as code on Azure, aimed at automating deployment and improving scalability, cost efficiency, and infrastructure management.
 
 ## 🚀 Live Demo
-> https://krypticthadonbeats-app.jollyfield-c1ca1ca8.westus2.azurecontainerapps.io/
+> https://krypticthadonbeats-azure-app-infra.pages.dev/
 
 ---
 
